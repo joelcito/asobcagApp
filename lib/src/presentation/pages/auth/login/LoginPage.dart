@@ -108,9 +108,9 @@ class _LoginPageState extends State<LoginPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromARGB(
                   255,
-                  82,
-                  61,
-                  3,
+                  122,
+                  110,
+                  42,
                 ), // Color del botón
                 padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                 shape: RoundedRectangleBorder(
