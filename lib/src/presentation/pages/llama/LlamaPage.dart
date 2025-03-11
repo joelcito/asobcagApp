@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:indrive_clone_flutter/src/data/EjemplarService.dart';
+import 'package:indrive_clone_flutter/src/presentation/pages/llama/FormularioLlamaPage.dart';
 import '../../../config/AppConfig.dart';
 
 class LlamaPage extends StatefulWidget {
@@ -170,6 +171,17 @@ class _LlamaPageState extends State<LlamaPage> {
             );
           },
         ),
+      ),
+      // Agregar el botón flotante
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FormularioLlamaPage()),
+          );
+        },
+        child: Icon(Icons.add, size: 32),
+        backgroundColor: Colors.orange,
       ),
     );
 

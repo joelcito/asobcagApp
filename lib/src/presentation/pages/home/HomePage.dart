@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:indrive_clone_flutter/src/data/AuthService.dart';
+import 'package:indrive_clone_flutter/src/data/EjemplarService.dart';
 import 'package:indrive_clone_flutter/src/presentation/pages/llama/LlamaPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _cargarUsuario();
+    EjemplarService().enviarEjemplaresPendientes();
   }
 
   Future<void> _cargarUsuario() async {
@@ -115,6 +117,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: IndexedStack(index: _selectedIndex, children: _pages),
+      
     );
   }
 }

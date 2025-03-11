@@ -3,6 +3,7 @@ import 'package:indrive_clone_flutter/src/presentation/pages/auth/login/LoginPag
 import 'package:indrive_clone_flutter/src/presentation/pages/home/HomePage.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
