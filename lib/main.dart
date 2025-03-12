@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:indrive_clone_flutter/src/data/AuthService.dart';
 import 'package:indrive_clone_flutter/src/presentation/pages/auth/login/LoginPage.dart';
 import 'package:indrive_clone_flutter/src/presentation/pages/home/HomePage.dart';
 
@@ -16,14 +17,48 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Auth',
       initialRoute: '/',
-      routes: {'/': (context) => LoginPage(), '/home': (context) => HomePage()},
+      // routes: {'/': (context) => LoginPage(), '/home': (context) => HomePage()},
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/home': (context) => HomePage(),
+        '/login': (context) => LoginPage(),
+      },
     );
-    // return MaterialApp(
-    //   title: 'Flutter Demo',
-    //   theme: ThemeData(
-    //     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-    //   ),
-    //   home: LoginPage(),
-    // );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final authService = AuthService();
+    final token = await authService.getValidAccessToken();
+
+    if (token != null) {
+      // Si hay un token válido, redirigir a la pantalla principal
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      // Si no hay token válido, redirigir a la pantalla de login
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child:
+            CircularProgressIndicator(), // Pantalla de carga mientras verificamos el estado
+      ),
+    );
   }
 }

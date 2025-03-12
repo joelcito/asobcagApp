@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:indrive_clone_flutter/src/data/DatabaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,7 +47,6 @@ class EjemplarService {
     }
   }
 
-  
   // Future<void> saveEjemplar(String nombre, String descripcion) async {
   //   final db = await DatabaseHelper.instance.database;
   //   final connectivity = await Connectivity().checkConnectivity();
@@ -103,29 +103,36 @@ class EjemplarService {
   //   }
   // }
 
-
-  
-  Future<bool> registroEjemplar(String nombre, String especie, String descripcion) async {
-
-    
-
+  Future<bool> registroEjemplar(
+    String nombre,
+    String especie,
+    String descripcion,
+  ) async {
     var connectivityResult = await Connectivity().checkConnectivity();
-    
+
     Map<String, dynamic> ejemplar = {
       "nombre": nombre,
       "especie": especie,
       "descripcion": descripcion,
     };
 
+    // print(ejemplar);
+    // print(connectivityResult);
+    // print(ConnectivityResult.none);
+    // print(connectivityResult == ConnectivityResult.none);
+
     if (connectivityResult == ConnectivityResult.none) {
       // Guardar en la base de datos local si no hay conexión
       await DatabaseHelper.instance.insertEjemplar(ejemplar);
       return true;
     } else {
-
       final url = Uri.parse("$baseUrl/registroEjemplar");
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
+
+      // print(url);
+      // print(token);
+      // print(token == null);
 
       if (token == null) {
         return false;
@@ -134,11 +141,21 @@ class EjemplarService {
       // Enviar directamente al servidor si hay conexión
       final response = await http.post(
         url,
-        headers: {"Content-Type": "application/json"},
+        // headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
         body: jsonEncode(ejemplar),
       );
 
-      if (response.statusCode == 201) {
+      print("---------------------------------------");
+      print(response);
+      print(response.statusCode);
+      print("---------------------------------------");
+
+      // if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         return true;
       } else {
         return false;
@@ -170,33 +187,39 @@ class EjemplarService {
     // } else {
     //   return false;
     // }
-
   }
 
   Future<void> enviarEjemplaresPendientes() async {
-      var connectivityResult = await Connectivity().checkConnectivity();
+    var connectivityResult = await Connectivity().checkConnectivity();
 
-      if (connectivityResult != ConnectivityResult.none) {
-        List<Map<String, dynamic>> pendientes = await DatabaseHelper.instance.getEjemplaresPendientes();
+    if (connectivityResult != ConnectivityResult.none) {
+      List<Map<String, dynamic>> pendientes =
+          await DatabaseHelper.instance.getEjemplaresPendientes();
 
-        for (var ejemplar in pendientes) {
+      print("*******************************************");
+      print("SE ESTA MANDADO EL OFFLINE");
+      print(pendientes);
+      print("*******************************************");
 
-          final url = Uri.parse("$baseUrl/registroEjemplar");
-          final prefs = await SharedPreferences.getInstance();
-          final token = prefs.getString('token');
+      for (var ejemplar in pendientes) {
+        final url = Uri.parse("$baseUrl/registroEjemplar");
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString('token');
 
-          final response = await http.post(
-            url,
-            headers: {"Content-Type": "application/json"},
-            body: jsonEncode(ejemplar),
-          );
+        final response = await http.post(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+          body: jsonEncode(ejemplar),
+        );
 
-          if (response.statusCode == 201) {
-            await DatabaseHelper.instance.deleteEjemplar(ejemplar['id']);
-          }
+        // if (response.statusCode == 201) {
+        if (response.statusCode == 200) {
+          await DatabaseHelper.instance.deleteEjemplar(ejemplar['id']);
         }
       }
+    }
   }
-
-
 }
