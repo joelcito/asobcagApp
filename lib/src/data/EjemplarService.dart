@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:indrive_clone_flutter/src/data/DataBaseImage.dart';
 import 'package:indrive_clone_flutter/src/data/DatabaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/AppConfig.dart';
@@ -47,157 +49,113 @@ class EjemplarService {
     }
   }
 
-  // Future<void> saveEjemplar(String nombre, String descripcion) async {
-  //   final db = await DatabaseHelper.instance.database;
-  //   final connectivity = await Connectivity().checkConnectivity();
-
-  //   if (connectivity == ConnectivityResult.none) {
-  //     // No hay internet, guardar en local
-  //     await db.insert('ejemplares', {
-  //       'nombre': nombre,
-  //       'descripcion': descripcion,
-  //       'sync_status': 0, // 0 = No sincronizado
-  //     });
-  //   } else {
-  //     // Hay internet, enviar al servidor
-  //     bool success = await sendToServer(nombre, descripcion);
-  //     if (!success) {
-  //       // Si falla, guardar en local
-  //       await db.insert('ejemplares', {
-  //         'nombre': nombre,
-  //         'descripcion': descripcion,
-  //         'sync_status': 0,
-  //       });
-  //     }
-  //   }
-  // }
-
-  // Future<bool> sendToServer(String nombre, String descripcion) async {
-  //   try {
-  //     // Simulación de petición al servidor
-  //     await Future.delayed(Duration(seconds: 2));
-  //     print("Ejemplar enviado a servidor: $nombre - $descripcion");
-  //     return true;
-  //   } catch (e) {
-  //     print("Error enviando ejemplar: $e");
-  //     return false;
-  //   }
-  // }
-
-  // Future<void> syncOfflineEjemplares() async {
-  //   final db = await DatabaseHelper.instance.database;
-  //   final connectivity = await Connectivity().checkConnectivity();
-
-  //   if (connectivity != ConnectivityResult.none) {
-  //     List<Map<String, dynamic>> ejemplares = await db.query(
-  //       'ejemplares',
-  //       where: 'sync_status = 0',
-  //     );
-
-  //     for (var ejemplar in ejemplares) {
-  //       bool success = await sendToServer(ejemplar['nombre'], ejemplar['descripcion']);
-  //       if (success) {
-  //         await db.delete('ejemplares', where: 'id = ?', whereArgs: [ejemplar['id']]);
-  //       }
-  //     }
-  //   }
-  // }
-
   Future<bool> registroEjemplar(
-    String nombre,
-    String especie,
-    String descripcion,
+    Map<String, dynamic> ejemplar,
+    List<File> imagenes,
   ) async {
     var connectivityResult = await Connectivity().checkConnectivity();
 
-    Map<String, dynamic> ejemplar = {
-      "nombre": nombre,
-      "especie": especie,
-      "descripcion": descripcion,
-    };
-
-    // print(ejemplar);
-    // print(connectivityResult);
-    // print(ConnectivityResult.none);
-    // print(connectivityResult == ConnectivityResult.none);
-
     if (connectivityResult == ConnectivityResult.none) {
       // Guardar en la base de datos local si no hay conexión
-      await DatabaseHelper.instance.insertEjemplar(ejemplar);
+      // await DatabaseHelper.instance.insertEjemplar(ejemplar);
+      int ejemplarId = await DatabaseHelper.instance.insertEjemplar(ejemplar);
+
+      // Guardar las imágenes asociadas al ejemplar
+      for (var imagen in imagenes) {
+        await DataBaseImage.instance.insertImagen({
+          'ejemplar_id': ejemplarId,
+          'ruta':
+              imagen
+                  .path, // O el nombre del archivo o el path donde guardas la imagen
+        });
+      }
+
       return true;
     } else {
       final url = Uri.parse("$baseUrl/registroEjemplar");
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
-      // print(url);
-      // print(token);
-      // print(token == null);
-
       if (token == null) {
         return false;
-        // throw Exception("No se pudo obtener el token.");
       }
-      // Enviar directamente al servidor si hay conexión
-      final response = await http.post(
-        url,
-        // headers: {"Content-Type": "application/json"},
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode(ejemplar),
-      );
 
-      print("---------------------------------------");
-      print(response);
+      var request = http.MultipartRequest("POST", url);
+      request.headers.addAll({"Authorization": "Bearer $token"});
+
+      // Agregar los datos del JSON como un campo de texto en la solicitud
+      request.fields['ejemplar'] = jsonEncode(ejemplar);
+
+      // Agregar imágenes a la solicitud
+      for (var i = 0; i < imagenes.length; i++) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'imagenes[]', // Este nombre debe coincidir con el backend en Laravel
+            imagenes[i].path,
+          ),
+        );
+      }
+
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      print("------------------------------------");
       print(response.statusCode);
-      print("---------------------------------------");
+      print(responseBody);
+      print("------------------------------------");
 
-      // if (response.statusCode == 201) {
       if (response.statusCode == 200) {
+        print("Ejemplar guardado con éxito: $responseBody");
         return true;
       } else {
+        print("Error al registrar el ejemplar: $responseBody");
         return false;
       }
     }
-
-    //  ****************  ESTE ESTA FUNCIONADO BEIN YA AGREGA ****************
-    // final url = Uri.parse("$baseUrl/registroEjemplar");
-    // final prefs = await SharedPreferences.getInstance();
-    // final token = prefs.getString('token');
-
-    // if (token == null) {
-    //   return false;
-    //   // throw Exception("No se pudo obtener el token.");
-    // }
-
-    // print(url);
-
-    // final json = {"nombre": nombre, "especie": especie, "descripcion": descripcion};
-
-    // final response = await http.post(
-    //   url,
-    //   headers: {"Content-Type": "application/json","Authorization": "Bearer $token"},
-    //   body: jsonEncode(json),
-    // );
-
-    // if (response.statusCode == 200) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
   }
 
   Future<void> enviarEjemplaresPendientes() async {
+    // var connectivityResult = await Connectivity().checkConnectivity();
+
+    // if (connectivityResult != ConnectivityResult.none) {
+    //   List<Map<String, dynamic>> pendientes =
+    //       await DatabaseHelper.instance.getEjemplaresPendientes();
+
+    //   print("*******************************************");
+    //   print("SE ESTA MANDADO EL OFFLINE");
+    //   print(pendientes);
+    //   print("*******************************************");
+
+    //   for (var ejemplar in pendientes) {
+    //     final url = Uri.parse("$baseUrl/registroEjemplar");
+    //     final prefs = await SharedPreferences.getInstance();
+    //     final token = prefs.getString('token');
+
+    //     final response = await http.post(
+    //       url,
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         "Authorization": "Bearer $token",
+    //       },
+    //       body: jsonEncode(ejemplar),
+    //     );
+
+    //     // if (response.statusCode == 201) {
+    //     if (response.statusCode == 200) {
+    //       await DatabaseHelper.instance.deleteEjemplar(ejemplar['id']);
+    //     }
+    //   }
+    // }
+
     var connectivityResult = await Connectivity().checkConnectivity();
 
     if (connectivityResult != ConnectivityResult.none) {
+      // Obtener todos los ejemplares pendientes en la base de datos local
       List<Map<String, dynamic>> pendientes =
           await DatabaseHelper.instance.getEjemplaresPendientes();
 
       print("*******************************************");
-      print("SE ESTA MANDADO EL OFFLINE");
+      print("SE ESTÁ MANDANDO EL OFFLINE");
       print(pendientes);
       print("*******************************************");
 
@@ -206,18 +164,43 @@ class EjemplarService {
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('token');
 
-        final response = await http.post(
-          url,
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $token",
-          },
-          body: jsonEncode(ejemplar),
-        );
+        // Recuperar las imágenes asociadas a este ejemplar
+        List<Map<String, dynamic>> imagenes = await DataBaseImage.instance
+            .getImagenesFindByIdEjemplar(ejemplar['id']);
 
-        // if (response.statusCode == 201) {
+        var request = http.MultipartRequest("POST", url);
+        request.headers.addAll({"Authorization": "Bearer $token"});
+
+        // Agregar los datos del ejemplar como un campo de texto en la solicitud
+        request.fields['ejemplar'] = jsonEncode(ejemplar);
+
+        // Agregar las imágenes a la solicitud
+        for (var imagen in imagenes) {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'imagenes[]', // Este nombre debe coincidir con el backend en Laravel
+              imagen['ruta'], // Ruta de la imagen guardada en la base de datos
+            ),
+          );
+        }
+
+        // Enviar la solicitud
+        var response = await request.send();
+        var responseBody = await response.stream.bytesToString();
+
+        print("*******************************************");
+        print(response.statusCode);
+        print(responseBody);
+        print("*******************************************");
+
         if (response.statusCode == 200) {
+          // Si el ejemplar se guardó correctamente en el servidor, eliminarlo de la base de datos local
           await DatabaseHelper.instance.deleteEjemplar(ejemplar['id']);
+
+          // Eliminar las imágenes asociadas a ese ejemplar en la base de datos local
+          for (var imagen in imagenes) {
+            await DataBaseImage.instance.deleteImagen(imagen['id']);
+          }
         }
       }
     }

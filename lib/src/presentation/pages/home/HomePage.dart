@@ -117,7 +117,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: IndexedStack(index: _selectedIndex, children: _pages),
-      
     );
   }
 }
