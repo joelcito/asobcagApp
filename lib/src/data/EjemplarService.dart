@@ -35,7 +35,20 @@ class EjemplarService {
         final ejemplares = data['ejemplares'] as List;
 
         return ejemplares.map<Map<String, dynamic>>((ejemplar) {
-          return {"title": ejemplar['nombre'], "images": ejemplar['imagenes']};
+          return {
+            "title": ejemplar['nombre'],
+            "images": ejemplar['imagenes'],
+            "sexo": ejemplar['sexo'],
+            "fecha_nacimiento": ejemplar['fecha_nacimiento'],
+            "numero_registro": ejemplar['numero_registro'],
+            "microchip": ejemplar['microchip'],
+            "arete": ejemplar['arete'],
+            "tipo": ejemplar['tipo'],
+            "nombreFenotipo": ejemplar['nombreFenotipo'],
+            "nombreColor": ejemplar['nombreColor'],
+            "nombrePadre": ejemplar['nombrePadre'],
+            "nombreMadre": ejemplar['nombreMadre'],
+          };
         }).toList();
       } else if (response.statusCode == 401) {
         throw Exception("El token ha expirado o no es válido.");
