@@ -129,6 +129,7 @@ class _LlamaPageState extends State<LlamaPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'llama_fab',
         onPressed: () {
           Navigator.push(
             context,

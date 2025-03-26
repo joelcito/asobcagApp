@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:indrive_clone_flutter/src/data/AuthService.dart';
 import 'package:indrive_clone_flutter/src/data/EjemplarService.dart';
+import 'package:indrive_clone_flutter/src/presentation/pages/llama/AlpacaPage.dart';
 import 'package:indrive_clone_flutter/src/presentation/pages/llama/LlamaPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -23,7 +24,8 @@ class _HomePageState extends State<HomePage> {
     Center(child: Text("🏠 Inicio", style: TextStyle(fontSize: 24))),
     // Center(child: Text("👤 Llama", style: TextStyle(fontSize: 24))),
     LlamaPage(),
-    Center(child: Text("⚙ Alpaca", style: TextStyle(fontSize: 24))),
+    // Center(child: Text("⚙ Alpaca", style: TextStyle(fontSize: 24))),
+    AlpacaPage(),
   ];
 
   @override
