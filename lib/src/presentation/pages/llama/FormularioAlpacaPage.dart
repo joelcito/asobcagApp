@@ -18,9 +18,9 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
   int? _fenotipoSeleccionado;
   String? _sexoSeleccionado;
   DateTime? _fechaSeleccionada;
-  int? _numeroRegistro;
   String? _microChip;
   String? _arete;
+  bool _isLoading = false;
 
   List<Map<String, dynamic>> _colores = [];
   List<Map<String, dynamic>> _fenotipos = [];
@@ -37,6 +37,9 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
 
   void _guardarEjemplar() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true; // Muestra el cargador y deshabilita el botón
+      });
       _formKey.currentState!.save();
 
       // Construcción del JSON con los datos del ejemplar
@@ -57,6 +60,10 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
         ejemplar,
         _imagenesSeleccionadas,
       );
+
+      setState(() {
+        _isLoading = false; // Muestra el cargador y deshabilita el botón
+      });
 
       if (success) {
         Navigator.pop(context);
@@ -133,7 +140,15 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Registrar de Alpaca")),
+      appBar: AppBar(
+        title: Text(
+          "Form. Registro de Alpaca",
+          style: TextStyle(
+            color: Color(0xFF7A6E2A),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         // <-- Agregado para permitir scroll
         child: Padding(
@@ -145,35 +160,84 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
                   CrossAxisAlignment.start, // <-- Alinea a la izquierda
               children: [
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Microchip"),
+                  decoration: InputDecoration(
+                    labelText: "Microchip",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
+                  ),
                   validator:
                       (value) => value!.isEmpty ? "Ingrese un microchip" : null,
                   onSaved: (value) => _microChip = value!,
+                  cursorColor: Color(0xFF7A6E2A),
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Nombre"),
+                  decoration: InputDecoration(
+                    labelText: "Nombre",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
+                  ),
                   validator:
                       (value) => value!.isEmpty ? "Ingrese un nombre" : null,
                   onSaved: (value) => _nombre = value!,
+                  cursorColor: Color(0xFF7A6E2A),
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Arete"),
+                  decoration: InputDecoration(
+                    labelText: "Arete",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
+                  ),
                   validator:
                       (value) => value!.isEmpty ? "Ingrese un arete" : null,
                   onSaved: (value) => _arete = value!,
+                  cursorColor: Color(0xFF7A6E2A),
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Tipo Parto"),
+                  decoration: InputDecoration(
+                    labelText: "Tipo Parto",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
+                  ),
                   validator:
                       (value) =>
                           value!.isEmpty ? "Ingrese el tipo de parto" : null,
                   onSaved: (value) => _tipo_parto = value!,
+                  cursorColor: Color(0xFF7A6E2A),
                 ),
                 SizedBox(height: 20),
 
                 // Dropdown de color
                 DropdownButtonFormField<int>(
-                  decoration: InputDecoration(labelText: "Selecciona un color"),
+                  decoration: InputDecoration(
+                    labelText: "Selecciona un color",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
+                  ),
                   value: _colorSeleccionado,
                   items:
                       _colores.map<DropdownMenuItem<int>>((color) {
@@ -194,7 +258,16 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
 
                 // Dropdown de sexos
                 DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: "Selecciona el sexo"),
+                  decoration: InputDecoration(
+                    labelText: "Selecciona el sexo",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
+                  ),
                   value: _sexoSeleccionado,
                   items:
                       _sexos.map<DropdownMenuItem<String>>((sexo) {
@@ -217,6 +290,13 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
                 DropdownButtonFormField<int>(
                   decoration: InputDecoration(
                     labelText: "Selecciona un Fenotipo",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
                   ),
                   value: _fenotipoSeleccionado,
                   items:
@@ -239,7 +319,16 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
 
                 // ESTO ES PARA LA FECHA
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Fecha de nacimiento"),
+                  decoration: InputDecoration(
+                    labelText: "Fecha de nacimiento",
+                    labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF7A6E2A),
+                        width: 2,
+                      ),
+                    ),
+                  ),
                   readOnly: true, // Deshabilita la edición directa del campo
                   controller: _fechaController, // Controlador para la fecha
                   onTap: () async {
@@ -269,11 +358,14 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
                 SizedBox(height: 20),
 
                 // Botón para tomar foto
-                IconButton(
-                  icon: Icon(Icons.camera_alt),
-                  onPressed: _tomarFoto,
-                  tooltip: "Tomar foto",
+                Center(
+                  child: IconButton(
+                    icon: Icon(Icons.camera_alt),
+                    onPressed: _tomarFoto,
+                    tooltip: "Tomar foto",
+                  ),
                 ),
+
                 SizedBox(height: 20),
 
                 // Mostrar imágenes seleccionadas
@@ -301,8 +393,33 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
 
                 // Botón de Guardar
                 ElevatedButton(
-                  onPressed: _guardarEjemplar,
-                  child: Text("Guardar"),
+                  onPressed: _isLoading ? null : _guardarEjemplar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        _isLoading
+                            ? Color(0xFF7A6E2A)
+                            : Color.fromARGB(
+                              255,
+                              89,
+                              83,
+                              39,
+                            ), // Color de fondo (puedes cambiarlo al que prefieras)
+                    minimumSize: Size(double.infinity, 50),
+                  ),
+                  child:
+                      _isLoading
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(color: Colors.white),
+                              SizedBox(width: 10),
+                              Text("Cargando"),
+                            ],
+                          )
+                          : Text(
+                            "Guardar",
+                            style: TextStyle(color: Colors.white),
+                          ),
                 ),
               ],
             ),

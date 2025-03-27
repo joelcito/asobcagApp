@@ -79,7 +79,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Menú Principal")),
+      appBar: AppBar(
+        title: Text(
+          "ASOGCAB",
+          style: TextStyle(
+            color: Color(0xFF7A6E2A),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       drawer: Drawer(
         child: Column(
           children: [
@@ -95,18 +104,28 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.house),
               title: Text("Inicio"),
               onTap: () => _onItemTapped(0),
             ),
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text("Llama"),
+              leading: Icon(Icons.bedroom_baby),
+              title: Text("Llamas en linea"),
               onTap: () => _onItemTapped(1),
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Alpaca"),
+              leading: Icon(Icons.bedroom_baby),
+              title: Text("Alpaca en linea"),
+              onTap: () => _onItemTapped(2),
+            ),
+            ListTile(
+              leading: Icon(Icons.bedroom_baby),
+              title: Text("Llamas fuera de linea"),
+              onTap: () => _onItemTapped(1),
+            ),
+            ListTile(
+              leading: Icon(Icons.bedroom_baby),
+              title: Text("Alpaca fuera de linea"),
               onTap: () => _onItemTapped(2),
             ),
             Divider(),

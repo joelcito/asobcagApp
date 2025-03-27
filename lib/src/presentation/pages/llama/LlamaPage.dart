@@ -46,7 +46,11 @@ class _LlamaPageState extends State<LlamaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Listado de Llamas")),
+      appBar: AppBar(
+        title: Text("Listado de Llamas", style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: Color(0xFF7A6E2A),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
@@ -136,194 +140,9 @@ class _LlamaPageState extends State<LlamaPage> {
             MaterialPageRoute(builder: (context) => FormularioLlamaPage()),
           );
         },
-        child: Icon(Icons.add, size: 32),
-        backgroundColor: Colors.orange,
+        child: Icon(Icons.add, size: 32, color: Colors.white),
+        backgroundColor: Color(0xFF7A6E2A),
       ),
     );
   }
-
-  // ****************** ESTE FUCNOION PERO NO MUESTRA TODAS LAS IMAGES **********************
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(title: Text("Listado de Llamas")),
-  //     body: Padding(
-  //       padding: const EdgeInsets.all(8.0),
-  //       child: GridView.builder(
-  //         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //           crossAxisCount: 2, // Cantidad de columnas
-  //           crossAxisSpacing: 10.0,
-  //           mainAxisSpacing: 10.0,
-  //           childAspectRatio: 1,
-  //         ),
-  //         itemCount: _items.length,
-  //         itemBuilder: (context, index) {
-  //           final item = _items[index];
-  //           return GestureDetector(
-  //             onTap: () {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (context) => LlamaDetailPage(item: item),
-  //                 ),
-  //               );
-  //             },
-  //             child: Card(
-  //               elevation: 4,
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(15),
-  //               ),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.center,
-  //                 children: [
-  //                   Flexible(
-  //                     child: ClipRRect(
-  //                       borderRadius: BorderRadius.vertical(
-  //                         top: Radius.circular(15),
-  //                       ),
-  //                       child: Image.network(
-  //                         item["images"][0], // Primera imagen de la lista
-  //                         fit: BoxFit.cover,
-  //                         width: double.infinity,
-  //                         height: 100,
-  //                         errorBuilder: (context, error, stackTrace) {
-  //                           return Icon(
-  //                             Icons.image_not_supported,
-  //                             size: 50,
-  //                             color: Colors.grey,
-  //                           );
-  //                         },
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Padding(
-  //                     padding: const EdgeInsets.all(8.0),
-  //                     child: Text(
-  //                       item["title"],
-  //                       style: TextStyle(
-  //                         fontSize: 16,
-  //                         fontWeight: FontWeight.bold,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //     floatingActionButton: FloatingActionButton(
-  //       onPressed: () {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => FormularioLlamaPage()),
-  //         );
-  //       },
-  //       child: Icon(Icons.add, size: 32),
-  //       backgroundColor: Colors.orange,
-  //     ),
-  //   );
-  // }
-
-  //  ************************ ESTE FUNCIONA PERO SIN CLICK *******************
-  // @override
-  // Widget build(BuildContext context) {
-  //   print(_items);
-
-  //   return Scaffold(
-  //     appBar: AppBar(title: Text("Listado de Llamas")),
-  //     body: Padding(
-  //       padding: const EdgeInsets.all(8.0),
-  //       child: GridView.builder(
-  //         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //           crossAxisCount: 2, // Cantidad de columnas
-  //           crossAxisSpacing: 10.0, // Espaciado entre columnas
-  //           mainAxisSpacing: 10.0, // Espaciado entre filas
-  //           childAspectRatio: 1, // Relación de aspecto
-  //         ),
-  //         itemCount: _items.length,
-  //         itemBuilder: (context, index) {
-  //           final item = _items[index];
-  //           return Card(
-  //             elevation: 4,
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(15),
-  //             ),
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [
-  //                 Flexible(
-  //                   child: GridView.builder(
-  //                     shrinkWrap: true,
-  //                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //                       crossAxisCount: 1, // Solo una columna para las imágenes
-  //                       crossAxisSpacing: 5,
-  //                       mainAxisSpacing: 5,
-  //                     ),
-  //                     itemCount: item["images"].length,
-  //                     itemBuilder: (context, imageIndex) {
-  //                       return ClipRRect(
-  //                         borderRadius: BorderRadius.vertical(
-  //                           top: Radius.circular(15),
-  //                         ),
-  //                         child: Image.network(
-  //                           // imageUrl,
-  //                           item["images"][imageIndex],
-  //                           fit: BoxFit.cover,
-  //                           width: double.infinity,
-  //                           errorBuilder: (context, error, stackTrace) {
-  //                             // Si la imagen no existe o no se puede cargar (404 o error en la red)
-  //                             if (error is NetworkImageLoadException) {
-  //                               // Aquí podemos manejar específicamente el error de carga de la imagen
-  //                               return Icon(
-  //                                 Icons
-  //                                     .image_not_supported, // Ícono cuando no se puede cargar la imagen
-  //                                 size: 50,
-  //                                 color: Colors.grey,
-  //                               );
-  //                             }
-  //                             // En caso de otro error, mostramos un ícono genérico
-  //                             print(error);
-
-  //                             return Icon(
-  //                               Icons.error,
-  //                               size: 50,
-  //                               color: Colors.red,
-  //                             );
-  //                           },
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                 ),
-  //                 Padding(
-  //                   padding: const EdgeInsets.all(8.0),
-  //                   child: Text(
-  //                     item["title"]!,
-  //                     style: TextStyle(
-  //                       fontSize: 16,
-  //                       fontWeight: FontWeight.bold,
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //     // Agregar el botón flotante
-  //     floatingActionButton: FloatingActionButton(
-  //       onPressed: () {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => FormularioLlamaPage()),
-  //         );
-  //       },
-  //       child: Icon(Icons.add, size: 32),
-  //       backgroundColor: Colors.orange,
-  //     ),
-  //   );
-  // }
 }

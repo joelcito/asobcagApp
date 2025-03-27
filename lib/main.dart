@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:indrive_clone_flutter/src/data/AuthService.dart';
 import 'package:indrive_clone_flutter/src/presentation/pages/auth/login/LoginPage.dart';
 import 'package:indrive_clone_flutter/src/presentation/pages/home/HomePage.dart';
@@ -16,6 +17,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Auth',
+      supportedLocales: [
+        Locale('es', 'ES'), // Español
+      ],
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate, // Para iOS
+      ],
       initialRoute: '/',
       // routes: {'/': (context) => LoginPage(), '/home': (context) => HomePage()},
       routes: {

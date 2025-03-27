@@ -46,7 +46,14 @@ class _AlpacaPageState extends State<AlpacaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Listado de Alpacas")),
+      appBar: AppBar(
+        title: Text(
+          "Listado de Alpacas",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: Color(0xFF7A6E2A),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
@@ -136,8 +143,8 @@ class _AlpacaPageState extends State<AlpacaPage> {
             MaterialPageRoute(builder: (context) => FormularioAlpacaPage()),
           );
         },
-        child: Icon(Icons.add, size: 32),
-        backgroundColor: Colors.orange,
+        child: Icon(Icons.add, size: 32, color: Colors.white),
+        backgroundColor: Color(0xFF7A6E2A),
       ),
     );
   }
