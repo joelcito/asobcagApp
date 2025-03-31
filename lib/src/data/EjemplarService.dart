@@ -179,38 +179,6 @@ class EjemplarService {
   }
 
   Future<void> enviarEjemplaresPendientes() async {
-    // var connectivityResult = await Connectivity().checkConnectivity();
-
-    // if (connectivityResult != ConnectivityResult.none) {
-    //   List<Map<String, dynamic>> pendientes =
-    //       await DatabaseHelper.instance.getEjemplaresPendientes();
-
-    //   print("*******************************************");
-    //   print("SE ESTA MANDADO EL OFFLINE");
-    //   print(pendientes);
-    //   print("*******************************************");
-
-    //   for (var ejemplar in pendientes) {
-    //     final url = Uri.parse("$baseUrl/registroEjemplar");
-    //     final prefs = await SharedPreferences.getInstance();
-    //     final token = prefs.getString('token');
-
-    //     final response = await http.post(
-    //       url,
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         "Authorization": "Bearer $token",
-    //       },
-    //       body: jsonEncode(ejemplar),
-    //     );
-
-    //     // if (response.statusCode == 201) {
-    //     if (response.statusCode == 200) {
-    //       await DatabaseHelper.instance.deleteEjemplar(ejemplar['id']);
-    //     }
-    //   }
-    // }
-
     var connectivityResult = await Connectivity().checkConnectivity();
 
     if (connectivityResult != ConnectivityResult.none) {
@@ -268,5 +236,48 @@ class EjemplarService {
         }
       }
     }
+  }
+
+  Future<List<Map<String, dynamic>>> ejemplaresLocales() async {
+    // Obtener los ejemplares pendientes
+    final _ejemplarPendientes =
+        await DatabaseHelper.instance.getEjemplaresPendientes();
+
+    // Crear una lista para almacenar los ejemplares con imágenes
+    List<Map<String, dynamic>> ejemplaresConImagenes = [];
+
+    // Iterar sobre los ejemplares pendientes
+    for (var ejemplar in _ejemplarPendientes) {
+      // Asegúrate de trabajar con una copia mutable del ejemplar
+      Map<String, dynamic> ejemplarMutable = Map.from(
+        ejemplar,
+      ); // Esto garantiza que trabajamos con una copia mutable
+
+      // Obtener las imágenes para cada ejemplar usando el ID
+      final List<Map<String, dynamic>> imagenes = await DataBaseImage.instance
+          .getImagenesFindByIdEjemplar(ejemplar['id']);
+
+      if (imagenes.isNotEmpty) {
+        // Asignar las imágenes a la copia mutable
+        ejemplarMutable['images'] =
+            imagenes.map((img) => img['ruta'].toString()).toList();
+      } else {
+        ejemplarMutable['images'] = [];
+      }
+
+      // Agregar el ejemplar con imágenes a la lista
+      ejemplaresConImagenes.add(ejemplarMutable);
+    }
+
+    print(
+      "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+    );
+    print(ejemplaresConImagenes);
+    print(
+      "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++",
+    );
+
+    // Devolver la lista de ejemplares con imágenes
+    return ejemplaresConImagenes;
   }
 }

@@ -22,18 +22,12 @@ class DatabaseHelper {
       path,
       version: 1,
       onCreate: _createDB,
+      readOnly: false,
       // onUpgrade: _onUpgrade,
     );
   }
 
   Future _createDB(Database db, int version) async {
-    // Solo elimina las tablas la primera vez
-    // if (isFirstTime) {
-    //   await db.execute('DROP TABLE IF EXISTS ejemplares');
-    //   isFirstTime =
-    //       false; // Cambia el flag a false después de la primera ejecución
-    // }
-
     await db.execute('''
       CREATE TABLE ejemplares (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,49 +44,7 @@ class DatabaseHelper {
     ''');
   }
 
-  // Método de actualización para manejar la migración (de la versión 1 a la versión 2)
-  // Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
-  //   if (oldVersion < 2) {
-  //     // Verificar si la columna 'fenotipo_id' existe
-  //     final columnCheck = await db.rawQuery("PRAGMA table_info(ejemplares)");
-  //     bool hasFenotipoIdColumn = columnCheck.any(
-  //       (column) => column['name'] == 'fenotipo_id',
-  //     );
-
-  //     if (!hasFenotipoIdColumn) {
-  //       // Si la columna no existe, agregarla
-  //       await db.execute('''
-  //         ALTER TABLE ejemplares ADD COLUMN fenotipo_id INTEGER NOT NULL DEFAULT 0
-  //       ''');
-  //     }
-
-  //     // Verificar si la columna 'color_id' existe
-  //     bool hasColorIdColumn = columnCheck.any(
-  //       (column) => column['name'] == 'color_id',
-  //     );
-  //     if (!hasColorIdColumn) {
-  //       // Si la columna no existe, agregarla
-  //       await db.execute('''
-  //         ALTER TABLE ejemplares ADD COLUMN color_id INTEGER NOT NULL DEFAULT 0
-  //       ''');
-  //     }
-  //   }
-  // }
-
   Future<int> insertEjemplar(Map<String, dynamic> ejemplar) async {
-    // print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    // final db = await instance.database;
-    // final result = await db.rawQuery("PRAGMA table_info(ejemplares)");
-    // print(result); // Esto imprimirá las columnas de la tabla 'ejemplares'
-    // print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
-    // print(
-    //   await db.rawQuery("PRAGMA table_info(ejemplares)"),
-    // ); // Esto imprimirá las columnas de la tabla 'ejemplares'
-
-    // deleteDatabaseFile();
-    // return 1;
-
     final db = await instance.database;
     return await db.insert('ejemplares', ejemplar);
   }
@@ -112,5 +64,38 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'ejemplares.db');
     await deleteDatabase(path);
+  }
+
+  Future<List<Map<String, dynamic>>> getEjemplaresConImagenes() async {
+    final db = await instance.database;
+
+    // Obtener todos los ejemplares
+    final List<Map<String, dynamic>> ejemplares = await db.query('ejemplares');
+    // final List<Map<String, dynamic>> imagenes = await db.query('imagenes');
+    print("**************************************************");
+    print(ejemplares);
+    // print(ejemplares);
+    print("**************************************************");
+
+    // Usar Future.wait para esperar que se obtengan todas las imágenes
+    // final List<Map<String, dynamic>> ejemplaresConImagenes = await Future.wait(
+    //   ejemplares.map((ejemplar) async {
+    //     // Obtener las imágenes para cada ejemplar
+    //     final List<Map<String, dynamic>> imagenes = await db.query(
+    //       'imagenes',
+    //       where: 'ejemplar_id = ?',
+    //       whereArgs: [ejemplar['id']],
+    //     );
+
+    //     // Agregar las rutas de las imágenes al ejemplar
+    //     ejemplar['images'] =
+    //         imagenes.map((img) => img['ruta'].toString()).toList();
+
+    //     return ejemplar;
+    //   }).toList(),
+    // );
+    // return ejemplaresConImagenes;
+
+    return [];
   }
 }

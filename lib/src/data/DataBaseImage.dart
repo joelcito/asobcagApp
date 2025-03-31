@@ -17,7 +17,12 @@ class DataBaseImage {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: _createDB,
+      readOnly: false,
+    );
   }
 
   Future _createDB(Database db, int version) async {
