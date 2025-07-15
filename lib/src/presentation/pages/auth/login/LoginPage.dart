@@ -1,5 +1,5 @@
+import 'package:FENCAMEL/src/data/AuthService.dart';
 import 'package:flutter/material.dart';
-import 'package:indrive_clone_flutter/src/data/AuthService.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,11 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacementNamed(context, "/home");
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Login fallido. Verifica tus credenciales no seas tonto",
-          ),
-        ),
+        SnackBar(content: Text("Login fallido. Verifica tus credenciales")),
       );
     }
   }

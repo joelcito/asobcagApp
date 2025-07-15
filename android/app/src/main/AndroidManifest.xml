@@ -11,7 +11,7 @@
     <application
         android:enableOnBackInvokedCallback="true"
         
-        android:label="indrive_clone_flutter"
+        android:label="FENCAMEL"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

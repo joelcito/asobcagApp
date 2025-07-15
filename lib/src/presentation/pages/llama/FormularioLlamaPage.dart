@@ -1,9 +1,13 @@
 import 'dart:io';
-
+import 'package:FENCAMEL/src/data/EjemplarService.dart';
+import 'package:FENCAMEL/src/domain/ColorService.dart';
+import 'package:FENCAMEL/src/domain/FenotipoService.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioEsquilaLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioFibraLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioMedicacionLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioMorfologicoLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioPequenoLlama.dart';
 import 'package:flutter/material.dart';
-import 'package:indrive_clone_flutter/src/data/EjemplarService.dart';
-import 'package:indrive_clone_flutter/src/domain/ColorService.dart';
-import 'package:indrive_clone_flutter/src/domain/FenotipoService.dart';
 import 'package:image_picker/image_picker.dart';
 
 class FormularioLlamaPage extends StatefulWidget {
@@ -34,6 +38,9 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   final Colorservice colorSerice = Colorservice();
   final Fenotiposervice fenotiposervice = Fenotiposervice();
   final ImagePicker _picker = ImagePicker();
+
+  List<Map<String, dynamic>> datosFormulariosPequenos = [];
+  List<Map<String, dynamic>> datosFormulariosMorfologico = [];
 
   void _guardarEjemplar() async {
     if (_formKey.currentState!.validate()) {
@@ -126,6 +133,113 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
         });
       }
     }
+  }
+
+  void _abrirFormularioPequeno() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioPequenoLlama(
+            onGuardar: (datos) {
+              setState(() {
+                datosFormulariosPequenos.add(datos);
+              });
+            },
+          ),
+    );
+  }
+
+  // ESTO ES PARA EL FORMULARIO MORFOLOGICO
+  final List<String> listaEvaluadores = [
+    'Evaluador 1',
+    'Evaluador 2',
+    'Evaluador 3',
+  ];
+
+  void _abrirFormularioMorfologico() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioMorfologicoLlama(
+            evaluadores: listaEvaluadores,
+            onGuardar: (datos) {
+              setState(() {
+                datosFormulariosMorfologico.add(datos);
+              });
+              Navigator.of(
+                context,
+              ).pop(); // Cierra el diálogo después de guardar
+            },
+          ),
+    );
+  }
+
+  // ESTO ES PARA EL FORMUALRIO DE FIBRAS
+  final List<String> listaLaboratorios = ['Lab A', 'Lab B', 'Lab C'];
+  final List<String> listaEquipos = ['Equipo 1', 'Equipo 2', 'Equipo 3'];
+  void _abrirFormularioFibra() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioFibraLlama(
+            laboratorios: listaLaboratorios,
+            equipos: listaEquipos,
+            onGuardar: (datos) {
+              setState(() {
+                // Maneja los datos recibidos aquí
+                print('Datos guardados: $datos');
+              });
+              Navigator.pop(context);
+            },
+          ),
+    );
+  }
+
+  // ESTO ES PARA FORM UALRIO DE ESQUILAS
+  final List<String> listaEsquiladores = ['Juan', 'Pedro', 'Luis'];
+
+  void _abrirFormularioEsquila() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioEsquilaLlama(
+            esquiladores: listaEsquiladores,
+            onGuardar: (datos) {
+              setState(() {
+                // Aquí puedes usar los datos recibidos del formulario
+                print('Datos esquila: $datos');
+              });
+              Navigator.pop(context);
+            },
+          ),
+    );
+  }
+
+  // ESTO ES PARA EL FORMULARIO DE MEDICACIONES
+  final productos = [
+    ProductoVeterinario(id: '1', nombre: 'Producto A'),
+    ProductoVeterinario(id: '2', nombre: 'Producto B'),
+  ];
+
+  final responsables = [
+    Responsable(id: '1', nombreCompleto: 'Juan Pérez'),
+    Responsable(id: '2', nombreCompleto: 'Ana Gómez'),
+  ];
+
+  void _abrirFormularioMedicacion() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioMedicacionLlama(
+            productos: productos,
+            responsables: responsables,
+            onGuardar: (datos) {
+              print('Datos medicación: $datos');
+              // Aquí procesas o guardas los datos
+              Navigator.pop(context);
+            },
+          ),
+    );
   }
 
   @override
@@ -430,6 +544,54 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
           ),
         ),
       ),
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 16, right: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton(
+              heroTag: 'btn1',
+              onPressed: _abrirFormularioPequeno,
+              child: Icon(Icons.add, size: 32),
+              backgroundColor: Colors.green,
+              tooltip: "Botón 1",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn2',
+              onPressed: _abrirFormularioMorfologico,
+              child: Icon(Icons.pets, size: 32),
+              backgroundColor: Colors.orange,
+              tooltip: "Botón 2",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn3',
+              onPressed: _abrirFormularioFibra,
+              child: Icon(Icons.directions_run, size: 32),
+              backgroundColor: Colors.blue,
+              tooltip: "Botón 3",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn4',
+              onPressed: _abrirFormularioEsquila,
+              child: Icon(Icons.star, size: 32),
+              backgroundColor: Colors.purple,
+              tooltip: "Botón 4",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn5',
+              onPressed: _abrirFormularioMedicacion,
+              child: Icon(Icons.camera_alt, size: 32),
+              backgroundColor: Colors.red,
+              tooltip: "Botón 5",
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

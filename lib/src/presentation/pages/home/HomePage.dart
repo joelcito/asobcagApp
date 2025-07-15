@@ -1,9 +1,9 @@
+import 'package:FENCAMEL/src/data/AuthService.dart';
+import 'package:FENCAMEL/src/data/EjemplarService.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/AlpacaPage.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/LlamaOffLinePage.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/LlamaPage.dart';
 import 'package:flutter/material.dart';
-import 'package:indrive_clone_flutter/src/data/AuthService.dart';
-import 'package:indrive_clone_flutter/src/data/EjemplarService.dart';
-import 'package:indrive_clone_flutter/src/presentation/pages/llama/AlpacaPage.dart';
-import 'package:indrive_clone_flutter/src/presentation/pages/llama/LlamaOffLinePage.dart';
-import 'package:indrive_clone_flutter/src/presentation/pages/llama/LlamaPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "ASOGCAB",
+          "FENCAMEL",
           style: TextStyle(
             color: Color(0xFF7A6E2A),
             fontWeight: FontWeight.bold,
@@ -122,13 +122,8 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: Icon(Icons.bedroom_baby),
-              title: Text("Llamas fuera de linea"),
+              title: Text("Ejemplares fuera de linea"),
               onTap: () => _onItemTapped(3),
-            ),
-            ListTile(
-              leading: Icon(Icons.bedroom_baby),
-              title: Text("Alpaca fuera de linea"),
-              onTap: () => _onItemTapped(4),
             ),
             Divider(),
             ListTile(

@@ -69,35 +69,6 @@ class AuthService {
     } else {
       return false;
     }
-
-    // final url = Uri.parse("$baseUrl/logout");
-
-    // // Obtener el token almacenado en SharedPreferences
-    // final prefs = await SharedPreferences.getInstance();
-    // final token = prefs.getString('token');
-
-    // if (token == null) {
-    //   return false;
-    // }
-
-    // final response = await http.post(
-    //   url,
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Authorization": "Bearer $token",
-    //   },
-    // );
-
-    // if (response.statusCode == 200) {
-    //   // Guardar token en SharedPreferences
-    //   final prefs = await SharedPreferences.getInstance();
-    //   await prefs.remove('token'); // Elimina el token de autenticación
-    //   await prefs.remove('usuario'); // Elimina cualquier dato del usuario
-    //   await prefs.remove('rol'); // Elimina el rol del usuario
-    //   return true;
-    // } else {
-    //   return false;
-    // }
   }
 
   Future<String?> getToken() async {
