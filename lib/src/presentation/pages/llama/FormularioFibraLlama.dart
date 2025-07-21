@@ -92,20 +92,33 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
     }
   }
 
-  Widget _campoTexto(String label, TextEditingController controller,
-      {TextInputType tipo = TextInputType.text}) {
+  Widget _campoTexto(
+    String label,
+    TextEditingController controller, {
+    bool requerido = true,
+    TextInputType keyboardType = TextInputType.text,
+    VoidCallback? onTap,
+    bool readOnly = false,
+  }) {
     return TextFormField(
       controller: controller,
-      keyboardType: tipo,
       decoration: InputDecoration(labelText: label),
-      validator: (val) => (val == null || val.isEmpty) ? 'Campo requerido' : null,
+      readOnly: readOnly,
+      keyboardType: keyboardType,
+      validator: (value) {
+        if (requerido && (value == null || value.isEmpty)) {
+          return 'Complete este campo';
+        }
+        return null;
+      },
+      onTap: onTap,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Formulario de Registro Fibras'),
+      title: Text('Registro Fibras'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -115,18 +128,22 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Laboratorio'),
                 value: laboratorioSeleccionado,
-                items: widget.laboratorios
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                onChanged: (val) => setState(() => laboratorioSeleccionado = val),
-                validator: (val) => val == null ? 'Seleccione laboratorio' : null,
+                items:
+                    widget.laboratorios
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .toList(),
+                onChanged:
+                    (val) => setState(() => laboratorioSeleccionado = val),
+                validator:
+                    (val) => val == null ? 'Seleccione laboratorio' : null,
               ),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Equipo'),
                 value: equipoSeleccionado,
-                items: widget.equipos
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
+                items:
+                    widget.equipos
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .toList(),
                 onChanged: (val) => setState(() => equipoSeleccionado = val),
                 validator: (val) => val == null ? 'Seleccione equipo' : null,
               ),
@@ -134,16 +151,18 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
                 onTap: () => _seleccionarFecha(context, true),
                 child: AbsorbPointer(
                   child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Fecha Muestreo',
-                    ),
+                    decoration: InputDecoration(labelText: 'Fecha Muestreo'),
                     controller: TextEditingController(
-                      text: fechaMuestreo == null
-                          ? ''
-                          : "${fechaMuestreo!.toLocal()}".split(' ')[0],
+                      text:
+                          fechaMuestreo == null
+                              ? ''
+                              : "${fechaMuestreo!.toLocal()}".split(' ')[0],
                     ),
-                    validator: (val) =>
-                        (val == null || val.isEmpty) ? 'Seleccione fecha' : null,
+                    validator:
+                        (val) =>
+                            (val == null || val.isEmpty)
+                                ? 'Seleccione fecha'
+                                : null,
                   ),
                 ),
               ),
@@ -151,26 +170,62 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
                 onTap: () => _seleccionarFecha(context, false),
                 child: AbsorbPointer(
                   child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Fecha Análisis',
-                    ),
+                    decoration: InputDecoration(labelText: 'Fecha Análisis'),
                     controller: TextEditingController(
-                      text: fechaAnalisis == null
-                          ? ''
-                          : "${fechaAnalisis!.toLocal()}".split(' ')[0],
+                      text:
+                          fechaAnalisis == null
+                              ? ''
+                              : "${fechaAnalisis!.toLocal()}".split(' ')[0],
                     ),
-                    validator: (val) =>
-                        (val == null || val.isEmpty) ? 'Seleccione fecha' : null,
+                    validator:
+                        (val) =>
+                            (val == null || val.isEmpty)
+                                ? 'Seleccione fecha'
+                                : null,
                   ),
                 ),
               ),
-              _campoTexto('Zona corporal', zonaCorporalController),
-              _campoTexto('FD', fdController, tipo: TextInputType.number),
-              _campoTexto('SD', sdController, tipo: TextInputType.number),
-              _campoTexto('CV', cvController, tipo: TextInputType.number),
-              _campoTexto('FC', fcController, tipo: TextInputType.number),
-              _campoTexto('PM', pmController, tipo: TextInputType.number),
-              _campoTexto('MFD', mfdController, tipo: TextInputType.number),
+              _campoTexto(
+                'Zona corporal',
+                zonaCorporalController,
+                requerido: false,
+              ),
+              _campoTexto(
+                'FD',
+                fdController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                'SD',
+                sdController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                'CV',
+                cvController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                'FC',
+                fcController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                'PM',
+                pmController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                'MFD',
+                mfdController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
               SizedBox(height: 20),
               ElevatedButton(onPressed: _guardar, child: Text('Guardar')),
             ],

@@ -80,7 +80,8 @@ class _FormularioMorfologicoLlamaState
 
   void _guardar() {
     if (_formKey.currentState!.validate()) {
-      final datos = {
+      // final datos = {
+      final Map<String, dynamic> datos = {
         "motivo": motivoSeleccionado,
         "fecha": fechaSeleccionada?.toIso8601String(),
         "evaluador": evaluadorSeleccionado,
@@ -102,20 +103,43 @@ class _FormularioMorfologicoLlamaState
     }
   }
 
-  Widget _campoTexto(String label, TextEditingController controller) {
+  // Widget _campoTexto(String label, TextEditingController controller) {
+  //   return TextFormField(
+  //     controller: controller,
+  //     decoration: InputDecoration(labelText: label),
+  //     validator:
+  //         (value) =>
+  //             (value == null || value.isEmpty) ? 'Complete este campo' : null,
+  //   );
+  // }
+
+  Widget _campoTexto(
+    String label,
+    TextEditingController controller, {
+    bool requerido = true,
+    TextInputType keyboardType = TextInputType.text,
+    VoidCallback? onTap,
+    bool readOnly = false,
+  }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(labelText: label),
-      validator:
-          (value) =>
-              (value == null || value.isEmpty) ? 'Complete este campo' : null,
+      readOnly: readOnly,
+      keyboardType: keyboardType,
+      validator: (value) {
+        if (requerido && (value == null || value.isEmpty)) {
+          return 'Complete este campo';
+        }
+        return null;
+      },
+      onTap: onTap,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Formulario de Registro Morfológico - Llama"),
+      title: Text("Registro Morfológico"),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -176,69 +200,78 @@ class _FormularioMorfologicoLlamaState
               ),
 
               SizedBox(height: 10),
-
-              // Campos morfologicos
-              Wrap(
-                spacing: 12,
-                runSpacing: 8,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Oreja", orejaController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Cuello", cuelloController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Cabeza", cabezaController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Alzada", alzadaController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Largo Cuerpo", largoCuerpoController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto(
-                      "Amplitud Pecho",
-                      amplitudPechoController,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Fortaleza", fortalezaController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Balance", balanceController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Canias", caniasController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Copete", copeteController),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto(
-                      "Línea Superior",
-                      lineaSuperiorController,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: _campoTexto("Grupa", grupaController),
-                  ),
-                ],
+              _campoTexto(
+                "Oreja",
+                orejaController,
+                requerido: false,
+                keyboardType: TextInputType.number,
               ),
-
+              _campoTexto(
+                "Cuello",
+                cuelloController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Cabeza",
+                cabezaController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Alzada",
+                alzadaController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Largo Cuerpo",
+                largoCuerpoController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Amplitud Pecho",
+                amplitudPechoController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Fortaleza",
+                fortalezaController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Balance",
+                balanceController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Canias",
+                caniasController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Copete",
+                copeteController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Línea Superior",
+                lineaSuperiorController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
+              _campoTexto(
+                "Grupa",
+                grupaController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
               SizedBox(height: 20),
               ElevatedButton(onPressed: _guardar, child: Text("Guardar")),
             ],

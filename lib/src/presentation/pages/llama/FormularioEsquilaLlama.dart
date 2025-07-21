@@ -85,21 +85,30 @@ class _FormularioEsquilaState extends State<FormularioEsquilaLlama> {
   Widget _campoTexto(
     String label,
     TextEditingController controller, {
-    TextInputType tipo = TextInputType.text,
+    bool requerido = true,
+    TextInputType keyboardType = TextInputType.text,
+    VoidCallback? onTap,
+    bool readOnly = false,
   }) {
     return TextFormField(
       controller: controller,
-      keyboardType: tipo,
       decoration: InputDecoration(labelText: label),
-      validator:
-          (val) => (val == null || val.isEmpty) ? 'Campo requerido' : null,
+      readOnly: readOnly,
+      keyboardType: keyboardType,
+      validator: (value) {
+        if (requerido && (value == null || value.isEmpty)) {
+          return 'Complete este campo';
+        }
+        return null;
+      },
+      onTap: onTap,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Formulario de Registro Esquilas'),
+      title: const Text('Registro Esquilas'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -146,29 +155,39 @@ class _FormularioEsquilaState extends State<FormularioEsquilaLlama> {
               _campoTexto(
                 'Peso Manto',
                 pesoMantoController,
-                tipo: TextInputType.number,
+                requerido: false,
+                keyboardType: TextInputType.number,
               ),
               _campoTexto(
                 'Peso Cuello',
                 pesoCuelloController,
-                tipo: TextInputType.number,
+                requerido: false,
+                keyboardType: TextInputType.number,
               ),
               _campoTexto(
                 'Peso Braga',
                 pesoBragaController,
-                tipo: TextInputType.number,
+                requerido: false,
+                keyboardType: TextInputType.number,
               ),
               _campoTexto(
                 'Peso Total',
                 pesoTotalController,
-                tipo: TextInputType.number,
+                requerido: false,
+                keyboardType: TextInputType.number,
               ),
               _campoTexto(
                 'Longitud',
                 longitudController,
-                tipo: TextInputType.number,
+                requerido: false,
+                keyboardType: TextInputType.number,
               ),
-              _campoTexto('Observación', observacionController),
+              _campoTexto(
+                'Observación',
+                observacionController,
+                requerido: false,
+                keyboardType: TextInputType.number,
+              ),
               const SizedBox(height: 20),
               ElevatedButton(onPressed: _guardar, child: const Text('Guardar')),
             ],

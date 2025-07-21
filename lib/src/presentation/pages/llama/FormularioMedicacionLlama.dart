@@ -87,10 +87,33 @@ class _FormularioMedicacionState extends State<FormularioMedicacionLlama> {
     }
   }
 
+  Widget _campoTexto(
+    String label,
+    TextEditingController controller, {
+    bool requerido = true,
+    TextInputType keyboardType = TextInputType.text,
+    VoidCallback? onTap,
+    bool readOnly = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      readOnly: readOnly,
+      keyboardType: keyboardType,
+      validator: (value) {
+        if (requerido && (value == null || value.isEmpty)) {
+          return 'Complete este campo';
+        }
+        return null;
+      },
+      onTap: onTap,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Formulario de Medicación'),
+      title: const Text('Registro Medicación'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -148,6 +171,12 @@ class _FormularioMedicacionState extends State<FormularioMedicacionLlama> {
                                 : null,
                   ),
                 ),
+              ),
+              _campoTexto(
+                "Tipo",
+                tipoController,
+                requerido: false,
+                keyboardType: TextInputType.text,
               ),
               TextFormField(
                 controller: tipoController,

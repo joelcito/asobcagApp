@@ -1,3 +1,4 @@
+import 'package:FENCAMEL/src/domain/UsuarioService.dart';
 import 'package:flutter/material.dart';
 
 class FormularioPequenoLlama extends StatefulWidget {
@@ -42,12 +43,29 @@ class _FormularioPequenoLlamaState extends State<FormularioPequenoLlama> {
   final TextEditingController diametroCaniaPostController =
       TextEditingController();
 
+  final Usuarioservice usuarioservice = Usuarioservice();
+
   // Ejemplo lista evaluadores
-  final List<String> evaluadores = [
-    "Evaluador 1",
-    "Evaluador 2",
-    "Evaluador 3",
-  ];
+  // final List<String> evaluadores = [
+  //   "Evaluador 1",
+  //   "Evaluador 2",
+  //   "Evaluador 3",
+  // ];
+
+  @override
+  void initState() {
+    super.initState();
+    cargarUsuarios(); // Aquí cargas la lista apenas se abre el diálogo
+  }
+
+  List<Map<String, dynamic>> evaluadores = [];
+
+  Future<void> cargarUsuarios() async {
+    List<Map<String, dynamic>> usuarios = await usuarioservice.listaUsuarios();
+    setState(() {
+      evaluadores = usuarios;
+    });
+  }
 
   @override
   void dispose() {
@@ -140,117 +158,343 @@ class _FormularioPequenoLlamaState extends State<FormularioPequenoLlama> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Formulario de Registro Biométrico"),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _campoTexto("Motivo", motivoController, requerido: true),
-              GestureDetector(
-                onTap: () => _seleccionarFecha(context),
-                child: AbsorbPointer(
-                  child: _campoTexto(
-                    "Fecha",
-                    fechaController,
-                    requerido: true,
-                    readOnly: true,
+      title: Text("Registro Biométrico"),
+      content: SizedBox(
+        width: 350,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _campoTexto("Motivo", motivoController, requerido: true),
+                GestureDetector(
+                  onTap: () => _seleccionarFecha(context),
+                  child: AbsorbPointer(
+                    child: _campoTexto(
+                      "Fecha",
+                      fechaController,
+                      requerido: true,
+                      readOnly: true,
+                    ),
                   ),
                 ),
-              ),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: "Evaluador"),
-                value: evaluadorSeleccionado,
-                items:
-                    evaluadores
-                        .map((e) => DropdownMenuItem(child: Text(e), value: e))
-                        .toList(),
-                onChanged: (val) => setState(() => evaluadorSeleccionado = val),
-                validator: (val) => val == null ? 'Seleccione evaluador' : null,
-              ),
-              _campoTexto(
-                "Peso",
-                pesoController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Altura Cruz",
-                alturaCruzController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Altura Grupa",
-                alturaGrupaController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Altura Cabeza",
-                alturaCabezaController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Ancho Pecho",
-                anchoPechoController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Ancho Isquiones",
-                anchoIsquionesController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Perímetro Torácico",
-                perimetroToraxicoController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Perímetro Abdominal",
-                perimetroAbdominalController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Largo Cuello",
-                largoCuelloController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Cuello Perímetro Sup.",
-                cuelloPerimetroSupController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Cuello Perímetro Inf.",
-                cuelloPerimetroInfController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Largo Oreja",
-                largoOrejaController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Largo Cola",
-                largoColaController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Diámetro Cania Ant.",
-                diametroCaniaAntController,
-                keyboardType: TextInputType.number,
-              ),
-              _campoTexto(
-                "Diámetro Cania Post.",
-                diametroCaniaPostController,
-                keyboardType: TextInputType.number,
-              ),
+                // DropdownButtonFormField<String>(
+                //   decoration: InputDecoration(labelText: "Evaluador"),
+                //   value: evaluadorSeleccionado,
+                //   items:
+                //       evaluadores.map((usuario) {
+                //         return DropdownMenuItem<String>(
+                //           value: usuario['usuario_id'].toString(),
+                //           child: Text(
+                //             usuario['nombre'],
+                //             overflow: TextOverflow.ellipsis,
+                //             maxLines: 1,
+                //           ),
+                //         );
+                //       }).toList(),
+                //   onChanged: (val) {
+                //     setState(() {
+                //       evaluadorSeleccionado = val;
+                //     });
+                //   },
+                //   validator: (val) => val == null ? 'Seleccione evaluador' : null,
+                // ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Container(
+                        width: double.infinity,
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(labelText: "Evaluador"),
+                          value: evaluadorSeleccionado,
+                          items:
+                              evaluadores.map((usuario) {
+                                return DropdownMenuItem<String>(
+                                  value: usuario['usuario_id'].toString(),
+                                  child: Text(
+                                    usuario['nombre'],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              evaluadorSeleccionado = val;
+                            });
+                          },
+                          validator:
+                              (val) =>
+                                  val == null ? 'Seleccione evaluador' : null,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                _campoTexto(
+                  "Peso",
+                  pesoController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Altura Cruz",
+                  alturaCruzController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Altura Grupa",
+                  alturaGrupaController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Altura Cabeza",
+                  alturaCabezaController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Ancho Pecho",
+                  anchoPechoController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Ancho Isquiones",
+                  anchoIsquionesController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Perímetro Torácico",
+                  perimetroToraxicoController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Perímetro Abdominal",
+                  perimetroAbdominalController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Largo Cuello",
+                  largoCuelloController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Cuello Perímetro Sup.",
+                  cuelloPerimetroSupController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Cuello Perímetro Inf.",
+                  cuelloPerimetroInfController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Largo Oreja",
+                  largoOrejaController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Largo Cola",
+                  largoColaController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Diámetro Cania Ant.",
+                  diametroCaniaAntController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
+                _campoTexto(
+                  "Diámetro Cania Post.",
+                  diametroCaniaPostController,
+                  requerido: false,
+                  keyboardType: TextInputType.number,
+                ),
 
-              SizedBox(height: 20),
-              ElevatedButton(onPressed: _guardar, child: Text("Guardar")),
-            ],
+                SizedBox(height: 20),
+                ElevatedButton(onPressed: _guardar, child: Text("Guardar")),
+              ],
+            ),
           ),
         ),
       ),
+
+      // content: SingleChildScrollView(
+      //   child: Form(
+      //     key: _formKey,
+      //     child: Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         _campoTexto("Motivo", motivoController, requerido: true),
+      //         GestureDetector(
+      //           onTap: () => _seleccionarFecha(context),
+      //           child: AbsorbPointer(
+      //             child: _campoTexto(
+      //               "Fecha",
+      //               fechaController,
+      //               requerido: true,
+      //               readOnly: true,
+      //             ),
+      //           ),
+      //         ),
+      //         // DropdownButtonFormField<String>(
+      //         //   decoration: InputDecoration(labelText: "Evaluador"),
+      //         //   value: evaluadorSeleccionado,
+      //         //   items:
+      //         //       evaluadores.map((usuario) {
+      //         //         return DropdownMenuItem<String>(
+      //         //           value: usuario['usuario_id'].toString(),
+      //         //           child: Text(
+      //         //             usuario['nombre'],
+      //         //             overflow: TextOverflow.ellipsis,
+      //         //             maxLines: 1,
+      //         //           ),
+      //         //         );
+      //         //       }).toList(),
+      //         //   onChanged: (val) {
+      //         //     setState(() {
+      //         //       evaluadorSeleccionado = val;
+      //         //     });
+      //         //   },
+      //         //   validator: (val) => val == null ? 'Seleccione evaluador' : null,
+      //         // ),
+      //         Row(
+      //           children: [
+      //             Expanded(
+      //               child: DropdownButtonFormField<String>(
+      //                 decoration: InputDecoration(labelText: "Evaluador"),
+      //                 value: evaluadorSeleccionado,
+      //                 items:
+      //                     evaluadores.map((usuario) {
+      //                       return DropdownMenuItem<String>(
+      //                         value: usuario['usuario_id'].toString(),
+      //                         child: Text(
+      //                           usuario['nombre'],
+      //                           overflow: TextOverflow.ellipsis,
+      //                           maxLines: 1,
+      //                         ),
+      //                       );
+      //                     }).toList(),
+      //                 onChanged: (val) {
+      //                   setState(() {
+      //                     evaluadorSeleccionado = val;
+      //                   });
+      //                 },
+      //                 validator:
+      //                     (val) => val == null ? 'Seleccione evaluador' : null,
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //         _campoTexto(
+      //           "Peso",
+      //           pesoController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Altura Cruz",
+      //           alturaCruzController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Altura Grupa",
+      //           alturaGrupaController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Altura Cabeza",
+      //           alturaCabezaController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Ancho Pecho",
+      //           anchoPechoController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Ancho Isquiones",
+      //           anchoIsquionesController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Perímetro Torácico",
+      //           perimetroToraxicoController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Perímetro Abdominal",
+      //           perimetroAbdominalController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Largo Cuello",
+      //           largoCuelloController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Cuello Perímetro Sup.",
+      //           cuelloPerimetroSupController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Cuello Perímetro Inf.",
+      //           cuelloPerimetroInfController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Largo Oreja",
+      //           largoOrejaController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Largo Cola",
+      //           largoColaController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Diámetro Cania Ant.",
+      //           diametroCaniaAntController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+      //         _campoTexto(
+      //           "Diámetro Cania Post.",
+      //           diametroCaniaPostController,
+      //           requerido: false,
+      //           keyboardType: TextInputType.number,
+      //         ),
+
+      //         SizedBox(height: 20),
+      //         ElevatedButton(onPressed: _guardar, child: Text("Guardar")),
+      //       ],
+      //     ),
+      //   ),
+      // ),
     );
   }
 }

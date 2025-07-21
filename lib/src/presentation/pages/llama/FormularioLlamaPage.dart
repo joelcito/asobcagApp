@@ -39,8 +39,10 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   final Fenotiposervice fenotiposervice = Fenotiposervice();
   final ImagePicker _picker = ImagePicker();
 
-  List<Map<String, dynamic>> datosFormulariosPequenos = [];
-  List<Map<String, dynamic>> datosFormulariosMorfologico = [];
+  final List<Map<String, dynamic>> datosFormulariosPequenosBiometrico = [];
+  final List<Map<String, dynamic>> datosFormulariosMorfologico = [];
+  final List<Map<String, dynamic>> datosFormulariosFibras = [];
+  final List<Map<String, dynamic>> datosFormulariosEsquila = [];
 
   void _guardarEjemplar() async {
     if (_formKey.currentState!.validate()) {
@@ -142,7 +144,9 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
           (context) => FormularioPequenoLlama(
             onGuardar: (datos) {
               setState(() {
-                datosFormulariosPequenos.add(datos);
+                print(datos);
+
+                datosFormulariosPequenosBiometrico.add(datos);
               });
             },
           ),
@@ -164,11 +168,12 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
             evaluadores: listaEvaluadores,
             onGuardar: (datos) {
               setState(() {
+                print(datos);
                 datosFormulariosMorfologico.add(datos);
               });
-              Navigator.of(
-                context,
-              ).pop(); // Cierra el diálogo después de guardar
+              // Navigator.of(
+              //   context,
+              // ).pop(); // Cierra el diálogo después de guardar
             },
           ),
     );
@@ -188,8 +193,9 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
               setState(() {
                 // Maneja los datos recibidos aquí
                 print('Datos guardados: $datos');
+                datosFormulariosFibras.add(datos);
               });
-              Navigator.pop(context);
+              // Navigator.pop(context);
             },
           ),
     );
@@ -208,8 +214,9 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
               setState(() {
                 // Aquí puedes usar los datos recibidos del formulario
                 print('Datos esquila: $datos');
+                datosFormulariosEsquila.add(datos);
               });
-              Navigator.pop(context);
+              // Navigator.pop(context);
             },
           ),
     );
