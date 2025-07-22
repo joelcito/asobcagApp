@@ -1,3 +1,4 @@
+import 'package:FENCAMEL/src/domain/LaboratorioService.dart';
 import 'package:flutter/material.dart';
 
 class FormularioFibraLlama extends StatefulWidget {
@@ -31,6 +32,8 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
   final TextEditingController fcController = TextEditingController();
   final TextEditingController pmController = TextEditingController();
   final TextEditingController mfdController = TextEditingController();
+
+  final Laboratorioservice laboratorioservice = Laboratorioservice();
 
   @override
   void dispose() {
@@ -116,6 +119,22 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    cargarLaboratorios(); // Aquí cargas la lista apenas se abre el diálogo
+  }
+
+  List<Map<String, dynamic>> _laboratorios = [];
+
+  Future<void> cargarLaboratorios() async {
+    List<Map<String, dynamic>> laboratorios =
+        await laboratorioservice.listaLaboratorios();
+    setState(() {
+      _laboratorios = laboratorios;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Registro Fibras'),
@@ -125,17 +144,40 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Laboratorio'),
-                value: laboratorioSeleccionado,
-                items:
-                    widget.laboratorios
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                onChanged:
-                    (val) => setState(() => laboratorioSeleccionado = val),
-                validator:
-                    (val) => val == null ? 'Seleccione laboratorio' : null,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth:
+                          constraints
+                              .maxWidth, // se ajusta al tamaño del dialog
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(labelText: "Laboratorio"),
+                      isExpanded: true,
+                      value: laboratorioSeleccionado,
+                      items:
+                          _laboratorios.map((usuario) {
+                            return DropdownMenuItem<String>(
+                              value: usuario['laboratorio_id'].toString(),
+                              child: Text(
+                                usuario['nombre'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          laboratorioSeleccionado = val;
+                        });
+                      },
+                      validator:
+                          (val) =>
+                              val == null ? 'Seleccione laboratorio' : null,
+                    ),
+                  );
+                },
               ),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Equipo'),

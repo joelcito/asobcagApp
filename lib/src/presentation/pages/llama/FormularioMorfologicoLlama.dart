@@ -1,3 +1,4 @@
+import 'package:FENCAMEL/src/domain/UsuarioService.dart';
 import 'package:flutter/material.dart';
 
 class FormularioMorfologicoLlama extends StatefulWidget {
@@ -35,6 +36,8 @@ class _FormularioMorfologicoLlamaState
   final TextEditingController copeteController = TextEditingController();
   final TextEditingController lineaSuperiorController = TextEditingController();
   final TextEditingController grupaController = TextEditingController();
+
+  final Usuarioservice usuarioservice = Usuarioservice();
 
   final List<String> motivos = [
     "Destete",
@@ -137,6 +140,20 @@ class _FormularioMorfologicoLlamaState
   }
 
   @override
+  void initState() {
+    super.initState();
+    cargarUsuarios(); // Aquí cargas la lista apenas se abre el diálogo
+  }
+
+  List<Map<String, dynamic>> evaluadores = [];
+  Future<void> cargarUsuarios() async {
+    List<Map<String, dynamic>> usuarios = await usuarioservice.listaUsuarios();
+    setState(() {
+      evaluadores = usuarios;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("Registro Morfológico"),
@@ -187,16 +204,39 @@ class _FormularioMorfologicoLlamaState
               SizedBox(height: 10),
 
               // Evaluador Dropdown
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: "Evaluador"),
-                items:
-                    widget.evaluadores
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                value: evaluadorSeleccionado,
-                onChanged: (val) => setState(() => evaluadorSeleccionado = val),
-                validator:
-                    (val) => val == null ? 'Seleccione un evaluador' : null,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth:
+                          constraints
+                              .maxWidth, // se ajusta al tamaño del dialog
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(labelText: "Evaluador"),
+                      isExpanded: true,
+                      value: evaluadorSeleccionado,
+                      items:
+                          evaluadores.map((usuario) {
+                            return DropdownMenuItem<String>(
+                              value: usuario['usuario_id'].toString(),
+                              child: Text(
+                                usuario['nombre'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          evaluadorSeleccionado = val;
+                        });
+                      },
+                      validator:
+                          (val) => val == null ? 'Seleccione evaluador' : null,
+                    ),
+                  );
+                },
               ),
 
               SizedBox(height: 10),

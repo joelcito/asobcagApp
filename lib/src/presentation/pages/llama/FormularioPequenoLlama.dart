@@ -179,6 +179,7 @@ class _FormularioPequenoLlamaState extends State<FormularioPequenoLlama> {
                     ),
                   ),
                 ),
+
                 // DropdownButtonFormField<String>(
                 //   decoration: InputDecoration(labelText: "Evaluador"),
                 //   value: evaluadorSeleccionado,
@@ -200,38 +201,42 @@ class _FormularioPequenoLlamaState extends State<FormularioPequenoLlama> {
                 //   },
                 //   validator: (val) => val == null ? 'Seleccione evaluador' : null,
                 // ),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Container(
-                        width: double.infinity,
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(labelText: "Evaluador"),
-                          value: evaluadorSeleccionado,
-                          items:
-                              evaluadores.map((usuario) {
-                                return DropdownMenuItem<String>(
-                                  value: usuario['usuario_id'].toString(),
-                                  child: Text(
-                                    usuario['nombre'],
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                );
-                              }).toList(),
-                          onChanged: (val) {
-                            setState(() {
-                              evaluadorSeleccionado = val;
-                            });
-                          },
-                          validator:
-                              (val) =>
-                                  val == null ? 'Seleccione evaluador' : null,
-                        ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth:
+                            constraints
+                                .maxWidth, // se ajusta al tamaño del dialog
                       ),
-                    ),
-                  ],
+                      child: DropdownButtonFormField<String>(
+                        decoration: InputDecoration(labelText: "Evaluador"),
+                        isExpanded: true,
+                        value: evaluadorSeleccionado,
+                        items:
+                            evaluadores.map((usuario) {
+                              return DropdownMenuItem<String>(
+                                value: usuario['usuario_id'].toString(),
+                                child: Text(
+                                  usuario['nombre'],
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            evaluadorSeleccionado = val;
+                          });
+                        },
+                        validator:
+                            (val) =>
+                                val == null ? 'Seleccione evaluador' : null,
+                      ),
+                    );
+                  },
                 ),
+
                 _campoTexto(
                   "Peso",
                   pesoController,
