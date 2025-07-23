@@ -1,12 +1,13 @@
+import 'package:FENCAMEL/src/domain/UsuarioService.dart';
 import 'package:flutter/material.dart';
 
 class FormularioEsquilaLlama extends StatefulWidget {
-  final List<String> esquiladores;
+  // final List<String> esquiladores;
   final void Function(Map<String, dynamic>) onGuardar;
 
   const FormularioEsquilaLlama({
     Key? key,
-    required this.esquiladores,
+    // required this.esquiladores,
     required this.onGuardar,
   }) : super(key: key);
 
@@ -29,6 +30,8 @@ class _FormularioEsquilaState extends State<FormularioEsquilaLlama> {
   final observacionController = TextEditingController();
 
   bool incaEsquila = false;
+
+  final Usuarioservice usuarioservice = Usuarioservice();
 
   @override
   void dispose() {
@@ -106,6 +109,21 @@ class _FormularioEsquilaState extends State<FormularioEsquilaLlama> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    cargarUsuarios(); // Aquí cargas la lista apenas se abre el diálogo
+  }
+
+  List<Map<String, dynamic>> _esquiladores = [];
+
+  Future<void> cargarUsuarios() async {
+    List<Map<String, dynamic>> usuarios = await usuarioservice.listaUsuarios();
+    setState(() {
+      _esquiladores = usuarios;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Registro Esquilas'),
@@ -115,17 +133,39 @@ class _FormularioEsquilaState extends State<FormularioEsquilaLlama> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Esquilador'),
-                value: esquiladorSeleccionado,
-                items:
-                    widget.esquiladores
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                onChanged:
-                    (val) => setState(() => esquiladorSeleccionado = val),
-                validator:
-                    (val) => val == null ? 'Seleccione esquilador' : null,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth:
+                          constraints
+                              .maxWidth, // se ajusta al tamaño del dialog
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(labelText: "Esquilador"),
+                      isExpanded: true,
+                      value: esquiladorSeleccionado,
+                      items:
+                          _esquiladores.map((usuario) {
+                            return DropdownMenuItem<String>(
+                              value: usuario['usuario_id'].toString(),
+                              child: Text(
+                                usuario['nombre'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          esquiladorSeleccionado = val;
+                        });
+                      },
+                      validator:
+                          (val) => val == null ? 'Seleccione esquilador' : null,
+                    ),
+                  );
+                },
               ),
               GestureDetector(
                 onTap: () => _seleccionarFecha(context),

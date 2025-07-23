@@ -1,15 +1,16 @@
+import 'package:FENCAMEL/src/domain/EquipoService.dart';
 import 'package:FENCAMEL/src/domain/LaboratorioService.dart';
 import 'package:flutter/material.dart';
 
 class FormularioFibraLlama extends StatefulWidget {
-  final List<String> laboratorios;
-  final List<String> equipos;
+  // final List<String> laboratorios;
+  // final List<String> equipos;
   final void Function(Map<String, dynamic>) onGuardar;
 
   const FormularioFibraLlama({
     Key? key,
-    required this.laboratorios,
-    required this.equipos,
+    // required this.laboratorios,
+    // required this.equipos,
     required this.onGuardar,
   }) : super(key: key);
 
@@ -34,6 +35,7 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
   final TextEditingController mfdController = TextEditingController();
 
   final Laboratorioservice laboratorioservice = Laboratorioservice();
+  final Equiposervice equiposervice = Equiposervice();
 
   @override
   void dispose() {
@@ -121,7 +123,8 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
   @override
   void initState() {
     super.initState();
-    cargarLaboratorios(); // Aquí cargas la lista apenas se abre el diálogo
+    cargarLaboratorios();
+    cargarEquipos();
   }
 
   List<Map<String, dynamic>> _laboratorios = [];
@@ -131,6 +134,15 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
         await laboratorioservice.listaLaboratorios();
     setState(() {
       _laboratorios = laboratorios;
+    });
+  }
+
+  List<Map<String, dynamic>> _equipos = [];
+
+  Future<void> cargarEquipos() async {
+    List<Map<String, dynamic>> equipos = await equiposervice.listaEquipos();
+    setState(() {
+      _equipos = equipos;
     });
   }
 
@@ -179,15 +191,39 @@ class _FormularioFibraState extends State<FormularioFibraLlama> {
                   );
                 },
               ),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Equipo'),
-                value: equipoSeleccionado,
-                items:
-                    widget.equipos
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                onChanged: (val) => setState(() => equipoSeleccionado = val),
-                validator: (val) => val == null ? 'Seleccione equipo' : null,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth:
+                          constraints
+                              .maxWidth, // se ajusta al tamaño del dialog
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(labelText: "Equipo"),
+                      isExpanded: true,
+                      value: equipoSeleccionado,
+                      items:
+                          _equipos.map((usuario) {
+                            return DropdownMenuItem<String>(
+                              value: usuario['equipo_id'].toString(),
+                              child: Text(
+                                usuario['nombre'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          equipoSeleccionado = val;
+                        });
+                      },
+                      validator:
+                          (val) => val == null ? 'Seleccione equipo' : null,
+                    ),
+                  );
+                },
               ),
               GestureDetector(
                 onTap: () => _seleccionarFecha(context, true),

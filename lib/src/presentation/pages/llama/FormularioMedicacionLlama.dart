@@ -1,28 +1,11 @@
+import 'package:FENCAMEL/src/domain/ProductoVeterrinarioService.dart';
+import 'package:FENCAMEL/src/domain/UsuarioService.dart';
 import 'package:flutter/material.dart';
 
-class ProductoVeterinario {
-  final String id;
-  final String nombre;
-  ProductoVeterinario({required this.id, required this.nombre});
-}
-
-class Responsable {
-  final String id;
-  final String nombreCompleto;
-  Responsable({required this.id, required this.nombreCompleto});
-}
-
 class FormularioMedicacionLlama extends StatefulWidget {
-  final List<ProductoVeterinario> productos;
-  final List<Responsable> responsables;
   final void Function(Map<String, dynamic>) onGuardar;
 
-  const FormularioMedicacionLlama({
-    Key? key,
-    required this.productos,
-    required this.responsables,
-    required this.onGuardar,
-  }) : super(key: key);
+  const FormularioMedicacionLlama({required this.onGuardar});
 
   @override
   _FormularioMedicacionState createState() => _FormularioMedicacionState();
@@ -31,14 +14,18 @@ class FormularioMedicacionLlama extends StatefulWidget {
 class _FormularioMedicacionState extends State<FormularioMedicacionLlama> {
   final _formKey = GlobalKey<FormState>();
 
-  ProductoVeterinario? productoSeleccionado;
-  Responsable? responsableSeleccionado;
+  String? productoSeleccionado;
+  String? responsableSeleccionado;
   DateTime? fecha;
 
   final tipoController = TextEditingController();
   final dosisController = TextEditingController();
   final unidadesController = TextEditingController();
   final observacionController = TextEditingController();
+
+  final Usuarioservice usuarioservice = Usuarioservice();
+  final Productoveterrinarioservice productoveterrinarioservice =
+      Productoveterrinarioservice();
 
   @override
   void dispose() {
@@ -70,8 +57,8 @@ class _FormularioMedicacionState extends State<FormularioMedicacionLlama> {
         responsableSeleccionado != null &&
         fecha != null) {
       final datos = {
-        'producto_veterinario_id': productoSeleccionado!.id,
-        'responsable_id': responsableSeleccionado!.id,
+        'producto_veterinario_id': productoSeleccionado,
+        'responsable_id': responsableSeleccionado,
         'fecha': fecha!.toIso8601String(),
         'tipo': tipoController.text,
         'dosis': int.tryParse(dosisController.text) ?? 0,
@@ -111,6 +98,32 @@ class _FormularioMedicacionState extends State<FormularioMedicacionLlama> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    cargarUsuarios(); // Aquí cargas la lista apenas se abre el diálogo
+    cargarProductoVeterrinarios();
+  }
+
+  List<Map<String, dynamic>> _responsables = [];
+
+  Future<void> cargarUsuarios() async {
+    List<Map<String, dynamic>> usuarios = await usuarioservice.listaUsuarios();
+    setState(() {
+      _responsables = usuarios;
+    });
+  }
+
+  List<Map<String, dynamic>> _producto_veterrinarios = [];
+
+  Future<void> cargarProductoVeterrinarios() async {
+    List<Map<String, dynamic>> productos =
+        await productoveterrinarioservice.listaProductoVeterrinarios();
+    setState(() {
+      _producto_veterrinarios = productos;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Registro Medicación'),
@@ -120,38 +133,77 @@ class _FormularioMedicacionState extends State<FormularioMedicacionLlama> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              DropdownButtonFormField<ProductoVeterinario>(
-                decoration: const InputDecoration(
-                  labelText: 'Producto Veterinario',
-                ),
-                value: productoSeleccionado,
-                items:
-                    widget.productos
-                        .map(
-                          (p) =>
-                              DropdownMenuItem(value: p, child: Text(p.nombre)),
-                        )
-                        .toList(),
-                onChanged: (val) => setState(() => productoSeleccionado = val),
-                validator:
-                    (val) => val == null ? 'Seleccione un producto' : null,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth:
+                          constraints
+                              .maxWidth, // se ajusta al tamaño del dialog
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: "Producto Veterrinario",
+                      ),
+                      isExpanded: true,
+                      value: productoSeleccionado,
+                      items:
+                          _producto_veterrinarios.map((producto) {
+                            return DropdownMenuItem<String>(
+                              value:
+                                  producto['producto_veterrinario_id']
+                                      .toString(),
+                              child: Text(
+                                producto['nombre'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          productoSeleccionado = val;
+                        });
+                      },
+                      validator:
+                          (val) => val == null ? 'Seleccione esquilador' : null,
+                    ),
+                  );
+                },
               ),
-              DropdownButtonFormField<Responsable>(
-                decoration: const InputDecoration(labelText: 'Responsable'),
-                value: responsableSeleccionado,
-                items:
-                    widget.responsables
-                        .map(
-                          (r) => DropdownMenuItem(
-                            value: r,
-                            child: Text(r.nombreCompleto),
-                          ),
-                        )
-                        .toList(),
-                onChanged:
-                    (val) => setState(() => responsableSeleccionado = val),
-                validator:
-                    (val) => val == null ? 'Seleccione un responsable' : null,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth:
+                          constraints
+                              .maxWidth, // se ajusta al tamaño del dialog
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(labelText: "Responsable"),
+                      isExpanded: true,
+                      value: responsableSeleccionado,
+                      items:
+                          _responsables.map((usuario) {
+                            return DropdownMenuItem<String>(
+                              value: usuario['usuario_id'].toString(),
+                              child: Text(
+                                usuario['nombre'],
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          responsableSeleccionado = val;
+                        });
+                      },
+                      validator:
+                          (val) => val == null ? 'Seleccione esquilador' : null,
+                    ),
+                  );
+                },
               ),
               GestureDetector(
                 onTap: () => _seleccionarFecha(context),
@@ -177,13 +229,6 @@ class _FormularioMedicacionState extends State<FormularioMedicacionLlama> {
                 tipoController,
                 requerido: false,
                 keyboardType: TextInputType.text,
-              ),
-              TextFormField(
-                controller: tipoController,
-                decoration: const InputDecoration(labelText: 'Tipo'),
-                validator:
-                    (val) =>
-                        (val == null || val.isEmpty) ? 'Campo requerido' : null,
               ),
               TextFormField(
                 controller: dosisController,

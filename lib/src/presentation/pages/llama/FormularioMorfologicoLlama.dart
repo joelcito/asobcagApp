@@ -2,11 +2,11 @@ import 'package:FENCAMEL/src/domain/UsuarioService.dart';
 import 'package:flutter/material.dart';
 
 class FormularioMorfologicoLlama extends StatefulWidget {
-  final List<String> evaluadores;
+  // final List<String> evaluadores;
   final void Function(Map<String, dynamic> datos) onGuardar;
 
   FormularioMorfologicoLlama({
-    required this.evaluadores,
+    // required this.evaluadores,
     required this.onGuardar,
   });
 

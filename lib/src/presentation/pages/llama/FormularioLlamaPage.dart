@@ -17,7 +17,7 @@ class FormularioLlamaPage extends StatefulWidget {
 
 class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   String _nombre = '';
-  String _tipo_parto = '';
+  String? _tipo_parto;
   int? _colorSeleccionado;
   int? _fenotipoSeleccionado;
   String? _sexoSeleccionado;
@@ -30,6 +30,7 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   List<Map<String, dynamic>> _colores = [];
   List<Map<String, dynamic>> _fenotipos = [];
   List<String> _sexos = ["Macho", "Hembra"];
+  List<String> _tipo_partos = ["NORMAL", "ASISTIDO"];
   List<File> _imagenesSeleccionadas = [];
   TextEditingController _fechaController = TextEditingController();
 
@@ -39,10 +40,16 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   final Fenotiposervice fenotiposervice = Fenotiposervice();
   final ImagePicker _picker = ImagePicker();
 
-  final List<Map<String, dynamic>> datosFormulariosPequenosBiometrico = [];
-  final List<Map<String, dynamic>> datosFormulariosMorfologico = [];
-  final List<Map<String, dynamic>> datosFormulariosFibras = [];
-  final List<Map<String, dynamic>> datosFormulariosEsquila = [];
+  // final List<Map<String, dynamic>> datosFormulariosPequenosBiometrico = [];
+  // final List<Map<String, dynamic>> datosFormulariosMorfologico = [];
+  // final List<Map<String, dynamic>> datosFormulariosFibras = [];
+  // final List<Map<String, dynamic>> datosFormulariosEsquila = [];
+
+  final Map<String, dynamic> datosFormulariosPequenosBiometrico = {};
+  final Map<String, dynamic> datosFormulariosMorfologico = {};
+  final Map<String, dynamic> datosFormulariosFibras = {};
+  final Map<String, dynamic> datosFormulariosEsquila = {};
+  final Map<String, dynamic> datosFormulariosMedicacion = {};
 
   void _guardarEjemplar() async {
     if (_formKey.currentState!.validate()) {
@@ -63,6 +70,162 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
         "microchip": _microChip,
         "arete": _arete,
       };
+
+      if (datosFormulariosPequenosBiometrico.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_biometrico_motivo": datosFormulariosPequenosBiometrico['motivo'],
+          "reg_biometrico_fecha": datosFormulariosPequenosBiometrico['fecha'],
+          "reg_biometrico_evaluador_id":
+              datosFormulariosPequenosBiometrico['evaluador'],
+          "reg_biometrico_peso": datosFormulariosPequenosBiometrico['peso'],
+          "reg_biometrico_altura_cruz":
+              datosFormulariosPequenosBiometrico['altura_cruz'],
+          "reg_biometrico_altura_grupa":
+              datosFormulariosPequenosBiometrico['altura_grupa'],
+          "reg_biometrico_altura_cabeza":
+              datosFormulariosPequenosBiometrico['altura_cabeza'],
+          "reg_biometrico_ancho_pecho":
+              datosFormulariosPequenosBiometrico['ancho_pecho'],
+          "reg_biometrico_ancho_isquiones":
+              datosFormulariosPequenosBiometrico['ancho_isquiones'],
+          "reg_biometrico_perimetro_toracico":
+              datosFormulariosPequenosBiometrico['perimetro_toraxico'],
+          "reg_biometrico_perimetro_abdominal":
+              datosFormulariosPequenosBiometrico['perimetro_abdominal'],
+          "reg_biometrico_largo_cuello":
+              datosFormulariosPequenosBiometrico['largo_cuello'],
+          "reg_biometrico_cuello_perimetro_sup":
+              datosFormulariosPequenosBiometrico['cuello_perimetro_sup'],
+          "reg_biometrico_cuello_perimetro_inf":
+              datosFormulariosPequenosBiometrico['cuello_perimetro_inf'],
+          "reg_biometrico_largo_oreja":
+              datosFormulariosPequenosBiometrico['largo_oreja'],
+          "reg_biometrico_largo_cola":
+              datosFormulariosPequenosBiometrico['largo_cola'],
+          "reg_biometrico_diametro_cania_ant":
+              datosFormulariosPequenosBiometrico['diametro_cania_ant'],
+          "reg_biometrico_diametro_cania_post":
+              datosFormulariosPequenosBiometrico['diametro_cania_post'],
+        });
+      }
+
+      // AHORA PARA REGISTRO MORFOLOGICOS
+      if (datosFormulariosMorfologico.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_morfologico_motivo": datosFormulariosMorfologico['motivo'],
+          "reg_morfologico_fecha": datosFormulariosMorfologico['fecha'],
+          "reg_morfologico_evaluador_id":
+              datosFormulariosMorfologico['evaluador'],
+          "reg_morfologico_oreja": datosFormulariosMorfologico['oreja'],
+          "reg_morfologico_cuello": datosFormulariosMorfologico['cuello'],
+          "reg_morfologico_cabeza": datosFormulariosMorfologico['cabeza'],
+          "reg_morfologico_alzada": datosFormulariosMorfologico['alzada'],
+          "reg_morfologico_largo_cuerpo":
+              datosFormulariosMorfologico['largo_cuerpo'],
+          "reg_morfologico_amplitud_pecho":
+              datosFormulariosMorfologico['amplitud_pecho'],
+          "reg_morfologico_fortaleza": datosFormulariosMorfologico['fortaleza'],
+          "reg_morfologico_balance": datosFormulariosMorfologico['balance'],
+          "reg_morfologico_canias": datosFormulariosMorfologico['canias'],
+          "reg_morfologico_copete": datosFormulariosMorfologico['copete'],
+          "reg_morfologico_linea_superior":
+              datosFormulariosMorfologico['linea_superior'],
+          "reg_morfologico_grupa": datosFormulariosMorfologico['grupa'],
+        });
+      }
+
+      // AHORA PARA FIBRAS
+      if (datosFormulariosFibras.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_fibra_laboratorio_id":
+              datosFormulariosFibras['laboratorio'] != null
+                  ? int.tryParse(datosFormulariosFibras['laboratorio'])
+                  : null,
+          "reg_fibra_equipo_id":
+              datosFormulariosFibras['equipo'] != null
+                  ? int.tryParse(datosFormulariosFibras['equipo'])
+                  : null,
+          "reg_fibra_fecha_muestreo": datosFormulariosFibras['fecha_muestreo'],
+          "reg_fibra_fecha_analisis": datosFormulariosFibras['fecha_analisis'],
+          "reg_fibra_zona_corporal": datosFormulariosFibras['zona_corporal'],
+          "reg_fibra_fd": datosFormulariosFibras['fd'],
+          "reg_fibra_sd": datosFormulariosFibras['sd'],
+          "reg_fibra_cv": datosFormulariosFibras['cv'],
+          "reg_fibra_fc": datosFormulariosFibras['fc'],
+          "reg_fibra_pm": datosFormulariosFibras['pm'],
+          "reg_fibra_mfd": datosFormulariosFibras['mfd'],
+        });
+      }
+
+      // AHORA PARA ESQUILAS
+      if (datosFormulariosEsquila.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_esquila_esquilador_id":
+              datosFormulariosEsquila['esquilador'] != null
+                  ? int.tryParse(datosFormulariosEsquila['esquilador'])
+                  : null,
+          "reg_esquila_fecha": datosFormulariosEsquila['fecha_esquila'],
+          "reg_esquila_tipo_esquila": datosFormulariosEsquila['tipo_esquila'],
+          "reg_esquila_inca_esquila":
+              datosFormulariosEsquila['inca_esquila'] == true ? 1 : 0,
+          "reg_esquila_peso_manto":
+              datosFormulariosEsquila['peso_manto']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_manto']
+                  : null,
+          "reg_esquila_peso_cuello":
+              datosFormulariosEsquila['peso_cuello']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_cuello']
+                  : null,
+          "reg_esquila_peso_braga":
+              datosFormulariosEsquila['peso_braga']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_braga']
+                  : null,
+          "reg_esquila_peso_total":
+              datosFormulariosEsquila['peso_total']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_total']
+                  : null,
+          "reg_esquila_longitud":
+              datosFormulariosEsquila['longitud']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['longitud']
+                  : null,
+          "reg_esquila_observacion":
+              datosFormulariosEsquila['observacion']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['observacion']
+                  : null,
+        });
+      }
+
+      if (datosFormulariosMedicacion.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_medicacion_producto_veterrinario_id":
+              datosFormulariosMedicacion['producto_veterinario_id'] != null
+                  ? int.tryParse(
+                    datosFormulariosMedicacion['producto_veterinario_id'],
+                  )
+                  : null,
+          "reg_medicacion_responsable_id":
+              datosFormulariosMedicacion['responsable_id'] != null
+                  ? int.tryParse(datosFormulariosMedicacion['responsable_id'])
+                  : null,
+          "reg_medicacion_fecha": datosFormulariosMedicacion['fecha'],
+          "reg_medicacion_tipo":
+              datosFormulariosMedicacion['tipo']?.isNotEmpty == true
+                  ? datosFormulariosMedicacion['tipo']
+                  : null,
+          "reg_medicacion_docis":
+              datosFormulariosMedicacion['dosis']?.toString().isNotEmpty == true
+                  ? datosFormulariosMedicacion['dosis'].toString()
+                  : null,
+          "reg_medicacion_unidades":
+              datosFormulariosMedicacion['unidades']?.isNotEmpty == true
+                  ? datosFormulariosMedicacion['unidades']
+                  : null,
+          "reg_medicacion_observacion":
+              datosFormulariosMedicacion['observacion']?.isNotEmpty == true
+                  ? datosFormulariosMedicacion['observacion']
+                  : null,
+        });
+      }
 
       // Llamar al servicio para registrar el ejemplar con imágenes
       bool success = await ejemplarService.registroEjemplar(
@@ -144,9 +307,8 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
           (context) => FormularioPequenoLlama(
             onGuardar: (datos) {
               setState(() {
-                print(datos);
-
-                datosFormulariosPequenosBiometrico.add(datos);
+                // print(datos);
+                datosFormulariosPequenosBiometrico.addAll(datos);
               });
             },
           ),
@@ -154,22 +316,23 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   }
 
   // ESTO ES PARA EL FORMULARIO MORFOLOGICO
-  final List<String> listaEvaluadores = [
-    'Evaluador 1',
-    'Evaluador 2',
-    'Evaluador 3',
-  ];
+  // final List<String> listaEvaluadores = [
+  //   'Evaluador 1',
+  //   'Evaluador 2',
+  //   'Evaluador 3',
+  // ];
 
   void _abrirFormularioMorfologico() {
     showDialog(
       context: context,
       builder:
           (context) => FormularioMorfologicoLlama(
-            evaluadores: listaEvaluadores,
+            // evaluadores: listaEvaluadores,
             onGuardar: (datos) {
               setState(() {
-                print(datos);
-                datosFormulariosMorfologico.add(datos);
+                // print(datos);
+                // datosFormulariosMorfologico.add(datos);
+                datosFormulariosMorfologico.addAll(datos);
               });
               // Navigator.of(
               //   context,
@@ -180,20 +343,21 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   }
 
   // ESTO ES PARA EL FORMUALRIO DE FIBRAS
-  final List<String> listaLaboratorios = ['Lab A', 'Lab B', 'Lab C'];
-  final List<String> listaEquipos = ['Equipo 1', 'Equipo 2', 'Equipo 3'];
+  // final List<String> listaLaboratorios = ['Lab A', 'Lab B', 'Lab C'];
+  // final List<String> listaEquipos = ['Equipo 1', 'Equipo 2', 'Equipo 3'];
   void _abrirFormularioFibra() {
     showDialog(
       context: context,
       builder:
           (context) => FormularioFibraLlama(
-            laboratorios: listaLaboratorios,
-            equipos: listaEquipos,
+            // laboratorios: listaLaboratorios,
+            // equipos: listaEquipos,
             onGuardar: (datos) {
               setState(() {
                 // Maneja los datos recibidos aquí
-                print('Datos guardados: $datos');
-                datosFormulariosFibras.add(datos);
+                // print('Datos guardados: $datos');
+                // datosFormulariosFibras.add(datos);
+                datosFormulariosFibras.addAll(datos);
               });
               // Navigator.pop(context);
             },
@@ -202,19 +366,20 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
   }
 
   // ESTO ES PARA FORM UALRIO DE ESQUILAS
-  final List<String> listaEsquiladores = ['Juan', 'Pedro', 'Luis'];
+  // final List<String> listaEsquiladores = ['Juan', 'Pedro', 'Luis'];
 
   void _abrirFormularioEsquila() {
     showDialog(
       context: context,
       builder:
           (context) => FormularioEsquilaLlama(
-            esquiladores: listaEsquiladores,
+            // esquiladores: listaEsquiladores,
             onGuardar: (datos) {
               setState(() {
                 // Aquí puedes usar los datos recibidos del formulario
-                print('Datos esquila: $datos');
-                datosFormulariosEsquila.add(datos);
+                print(datos);
+                // datosFormulariosEsquila.add(datos);
+                datosFormulariosEsquila.addAll(datos);
               });
               // Navigator.pop(context);
             },
@@ -222,28 +387,16 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
     );
   }
 
-  // ESTO ES PARA EL FORMULARIO DE MEDICACIONES
-  final productos = [
-    ProductoVeterinario(id: '1', nombre: 'Producto A'),
-    ProductoVeterinario(id: '2', nombre: 'Producto B'),
-  ];
-
-  final responsables = [
-    Responsable(id: '1', nombreCompleto: 'Juan Pérez'),
-    Responsable(id: '2', nombreCompleto: 'Ana Gómez'),
-  ];
-
   void _abrirFormularioMedicacion() {
     showDialog(
       context: context,
       builder:
           (context) => FormularioMedicacionLlama(
-            productos: productos,
-            responsables: responsables,
             onGuardar: (datos) {
-              print('Datos medicación: $datos');
+              // print('Datos medicación: $datos');
               // Aquí procesas o guardas los datos
-              Navigator.pop(context);
+              // Navigator.pop(context);
+              datosFormulariosMedicacion.addAll(datos);
             },
           ),
     );
@@ -294,9 +447,8 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
                       ),
                     ),
                   ),
-                  validator:
-                      (value) => value!.isEmpty ? "Ingrese un microchip" : null,
-                  onSaved: (value) => _microChip = value!,
+                  validator: (value) => null,
+                  onSaved: (value) => _microChip = value ?? '',
                   cursorColor: Color(0xFF7A6E2A),
                 ),
                 TextFormField(
@@ -310,9 +462,8 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
                       ),
                     ),
                   ),
-                  validator:
-                      (value) => value!.isEmpty ? "Ingrese un nombre" : null,
-                  onSaved: (value) => _nombre = value!,
+                  validator: (value) => null,
+                  onSaved: (value) => _nombre = value ?? '',
                   cursorColor: Color(0xFF7A6E2A),
                 ),
                 TextFormField(
@@ -331,9 +482,27 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
                   onSaved: (value) => _arete = value!,
                   cursorColor: Color(0xFF7A6E2A),
                 ),
-                TextFormField(
+
+                // TextFormField(
+                //   decoration: InputDecoration(
+                //     labelText: "Tipo Parto",
+                //     labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
+                //     focusedBorder: UnderlineInputBorder(
+                //       borderSide: BorderSide(
+                //         color: Color(0xFF7A6E2A),
+                //         width: 2,
+                //       ),
+                //     ),
+                //   ),
+                //   validator:
+                //       (value) =>
+                //           value!.isEmpty ? "Ingrese el tipo de parto" : null,
+                //   onSaved: (value) => _tipo_parto = value!,
+                //   cursorColor: Color(0xFF7A6E2A),
+                // ),
+                DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-                    labelText: "Tipo Parto",
+                    labelText: "Selecciona el tipo parto",
                     labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
@@ -342,12 +511,24 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
                       ),
                     ),
                   ),
+                  value: _tipo_parto,
+                  items:
+                      _tipo_partos.map<DropdownMenuItem<String>>((tipoParto) {
+                        return DropdownMenuItem<String>(
+                          value: tipoParto,
+                          child: Text(tipoParto),
+                        );
+                      }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _tipo_parto = value;
+                    });
+                  },
                   validator:
                       (value) =>
-                          value!.isEmpty ? "Ingrese el tipo de parto" : null,
-                  onSaved: (value) => _tipo_parto = value!,
-                  cursorColor: Color(0xFF7A6E2A),
+                          value == null ? "Seleccione un tipo de parto" : null,
                 ),
+
                 SizedBox(height: 20),
 
                 // Dropdown de color
@@ -413,7 +594,7 @@ class _FormularioLlamaPageState extends State<FormularioLlamaPage> {
                 // Dropdown de Fenotipo
                 DropdownButtonFormField<int>(
                   decoration: InputDecoration(
-                    labelText: "Selecciona un Fenotipo",
+                    labelText: "Selecciona un Tipo",
                     labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(

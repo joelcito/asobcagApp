@@ -3,6 +3,11 @@ import 'dart:io';
 import 'package:FENCAMEL/src/data/EjemplarService.dart';
 import 'package:FENCAMEL/src/domain/ColorService.dart';
 import 'package:FENCAMEL/src/domain/FenotipoService.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioEsquilaLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioFibraLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioMedicacionLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioMorfologicoLlama.dart';
+import 'package:FENCAMEL/src/presentation/pages/llama/FormularioPequenoLlama.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -13,7 +18,7 @@ class FormularioAlpacaPage extends StatefulWidget {
 
 class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
   String _nombre = '';
-  String _tipo_parto = '';
+  String? _tipo_parto;
   int? _colorSeleccionado;
   int? _fenotipoSeleccionado;
   String? _sexoSeleccionado;
@@ -25,6 +30,7 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
   List<Map<String, dynamic>> _colores = [];
   List<Map<String, dynamic>> _fenotipos = [];
   List<String> _sexos = ["Macho", "Hembra"];
+  List<String> _tipo_partos = ["NORMAL", "ASISTIDO"];
   List<File> _imagenesSeleccionadas = [];
   TextEditingController _fechaController = TextEditingController();
   DateTime? _fecha;
@@ -34,6 +40,12 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
   final Colorservice colorSerice = Colorservice();
   final Fenotiposervice fenotiposervice = Fenotiposervice();
   final ImagePicker _picker = ImagePicker();
+
+  final Map<String, dynamic> datosFormulariosPequenosBiometrico = {};
+  final Map<String, dynamic> datosFormulariosMorfologico = {};
+  final Map<String, dynamic> datosFormulariosFibras = {};
+  final Map<String, dynamic> datosFormulariosEsquila = {};
+  final Map<String, dynamic> datosFormulariosMedicacion = {};
 
   void _guardarEjemplar() async {
     if (_formKey.currentState!.validate()) {
@@ -54,6 +66,162 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
         "microchip": _microChip,
         "arete": _arete,
       };
+
+      if (datosFormulariosPequenosBiometrico.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_biometrico_motivo": datosFormulariosPequenosBiometrico['motivo'],
+          "reg_biometrico_fecha": datosFormulariosPequenosBiometrico['fecha'],
+          "reg_biometrico_evaluador_id":
+              datosFormulariosPequenosBiometrico['evaluador'],
+          "reg_biometrico_peso": datosFormulariosPequenosBiometrico['peso'],
+          "reg_biometrico_altura_cruz":
+              datosFormulariosPequenosBiometrico['altura_cruz'],
+          "reg_biometrico_altura_grupa":
+              datosFormulariosPequenosBiometrico['altura_grupa'],
+          "reg_biometrico_altura_cabeza":
+              datosFormulariosPequenosBiometrico['altura_cabeza'],
+          "reg_biometrico_ancho_pecho":
+              datosFormulariosPequenosBiometrico['ancho_pecho'],
+          "reg_biometrico_ancho_isquiones":
+              datosFormulariosPequenosBiometrico['ancho_isquiones'],
+          "reg_biometrico_perimetro_toracico":
+              datosFormulariosPequenosBiometrico['perimetro_toraxico'],
+          "reg_biometrico_perimetro_abdominal":
+              datosFormulariosPequenosBiometrico['perimetro_abdominal'],
+          "reg_biometrico_largo_cuello":
+              datosFormulariosPequenosBiometrico['largo_cuello'],
+          "reg_biometrico_cuello_perimetro_sup":
+              datosFormulariosPequenosBiometrico['cuello_perimetro_sup'],
+          "reg_biometrico_cuello_perimetro_inf":
+              datosFormulariosPequenosBiometrico['cuello_perimetro_inf'],
+          "reg_biometrico_largo_oreja":
+              datosFormulariosPequenosBiometrico['largo_oreja'],
+          "reg_biometrico_largo_cola":
+              datosFormulariosPequenosBiometrico['largo_cola'],
+          "reg_biometrico_diametro_cania_ant":
+              datosFormulariosPequenosBiometrico['diametro_cania_ant'],
+          "reg_biometrico_diametro_cania_post":
+              datosFormulariosPequenosBiometrico['diametro_cania_post'],
+        });
+      }
+
+      // AHORA PARA REGISTRO MORFOLOGICOS
+      if (datosFormulariosMorfologico.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_morfologico_motivo": datosFormulariosMorfologico['motivo'],
+          "reg_morfologico_fecha": datosFormulariosMorfologico['fecha'],
+          "reg_morfologico_evaluador_id":
+              datosFormulariosMorfologico['evaluador'],
+          "reg_morfologico_oreja": datosFormulariosMorfologico['oreja'],
+          "reg_morfologico_cuello": datosFormulariosMorfologico['cuello'],
+          "reg_morfologico_cabeza": datosFormulariosMorfologico['cabeza'],
+          "reg_morfologico_alzada": datosFormulariosMorfologico['alzada'],
+          "reg_morfologico_largo_cuerpo":
+              datosFormulariosMorfologico['largo_cuerpo'],
+          "reg_morfologico_amplitud_pecho":
+              datosFormulariosMorfologico['amplitud_pecho'],
+          "reg_morfologico_fortaleza": datosFormulariosMorfologico['fortaleza'],
+          "reg_morfologico_balance": datosFormulariosMorfologico['balance'],
+          "reg_morfologico_canias": datosFormulariosMorfologico['canias'],
+          "reg_morfologico_copete": datosFormulariosMorfologico['copete'],
+          "reg_morfologico_linea_superior":
+              datosFormulariosMorfologico['linea_superior'],
+          "reg_morfologico_grupa": datosFormulariosMorfologico['grupa'],
+        });
+      }
+
+      // AHORA PARA FIBRAS
+      if (datosFormulariosFibras.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_fibra_laboratorio_id":
+              datosFormulariosFibras['laboratorio'] != null
+                  ? int.tryParse(datosFormulariosFibras['laboratorio'])
+                  : null,
+          "reg_fibra_equipo_id":
+              datosFormulariosFibras['equipo'] != null
+                  ? int.tryParse(datosFormulariosFibras['equipo'])
+                  : null,
+          "reg_fibra_fecha_muestreo": datosFormulariosFibras['fecha_muestreo'],
+          "reg_fibra_fecha_analisis": datosFormulariosFibras['fecha_analisis'],
+          "reg_fibra_zona_corporal": datosFormulariosFibras['zona_corporal'],
+          "reg_fibra_fd": datosFormulariosFibras['fd'],
+          "reg_fibra_sd": datosFormulariosFibras['sd'],
+          "reg_fibra_cv": datosFormulariosFibras['cv'],
+          "reg_fibra_fc": datosFormulariosFibras['fc'],
+          "reg_fibra_pm": datosFormulariosFibras['pm'],
+          "reg_fibra_mfd": datosFormulariosFibras['mfd'],
+        });
+      }
+
+      // AHORA PARA ESQUILAS
+      if (datosFormulariosEsquila.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_esquila_esquilador_id":
+              datosFormulariosEsquila['esquilador'] != null
+                  ? int.tryParse(datosFormulariosEsquila['esquilador'])
+                  : null,
+          "reg_esquila_fecha": datosFormulariosEsquila['fecha_esquila'],
+          "reg_esquila_tipo_esquila": datosFormulariosEsquila['tipo_esquila'],
+          "reg_esquila_inca_esquila":
+              datosFormulariosEsquila['inca_esquila'] == true ? 1 : 0,
+          "reg_esquila_peso_manto":
+              datosFormulariosEsquila['peso_manto']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_manto']
+                  : null,
+          "reg_esquila_peso_cuello":
+              datosFormulariosEsquila['peso_cuello']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_cuello']
+                  : null,
+          "reg_esquila_peso_braga":
+              datosFormulariosEsquila['peso_braga']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_braga']
+                  : null,
+          "reg_esquila_peso_total":
+              datosFormulariosEsquila['peso_total']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['peso_total']
+                  : null,
+          "reg_esquila_longitud":
+              datosFormulariosEsquila['longitud']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['longitud']
+                  : null,
+          "reg_esquila_observacion":
+              datosFormulariosEsquila['observacion']?.isNotEmpty == true
+                  ? datosFormulariosEsquila['observacion']
+                  : null,
+        });
+      }
+
+      if (datosFormulariosMedicacion.isNotEmpty) {
+        ejemplar.addAll({
+          "reg_medicacion_producto_veterrinario_id":
+              datosFormulariosMedicacion['producto_veterinario_id'] != null
+                  ? int.tryParse(
+                    datosFormulariosMedicacion['producto_veterinario_id'],
+                  )
+                  : null,
+          "reg_medicacion_responsable_id":
+              datosFormulariosMedicacion['responsable_id'] != null
+                  ? int.tryParse(datosFormulariosMedicacion['responsable_id'])
+                  : null,
+          "reg_medicacion_fecha": datosFormulariosMedicacion['fecha'],
+          "reg_medicacion_tipo":
+              datosFormulariosMedicacion['tipo']?.isNotEmpty == true
+                  ? datosFormulariosMedicacion['tipo']
+                  : null,
+          "reg_medicacion_docis":
+              datosFormulariosMedicacion['dosis']?.toString().isNotEmpty == true
+                  ? datosFormulariosMedicacion['dosis'].toString()
+                  : null,
+          "reg_medicacion_unidades":
+              datosFormulariosMedicacion['unidades']?.isNotEmpty == true
+                  ? datosFormulariosMedicacion['unidades']
+                  : null,
+          "reg_medicacion_observacion":
+              datosFormulariosMedicacion['observacion']?.isNotEmpty == true
+                  ? datosFormulariosMedicacion['observacion']
+                  : null,
+        });
+      }
 
       // Llamar al servicio para registrar el ejemplar con imágenes
       bool success = await ejemplarService.registroEjemplar(
@@ -121,11 +289,78 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
       final XFile? image = await _picker.pickImage(source: pickedOption);
       if (image != null) {
         setState(() {
-          // Añade la nueva imagen (o foto) a la lista
           _imagenesSeleccionadas.add(File(image.path));
         });
       }
     }
+  }
+
+  void _abrirFormularioPequeno() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioPequenoLlama(
+            onGuardar: (datos) {
+              setState(() {
+                datosFormulariosPequenosBiometrico.addAll(datos);
+              });
+            },
+          ),
+    );
+  }
+
+  void _abrirFormularioMorfologico() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioMorfologicoLlama(
+            onGuardar: (datos) {
+              setState(() {
+                datosFormulariosMorfologico.addAll(datos);
+              });
+            },
+          ),
+    );
+  }
+
+  void _abrirFormularioFibra() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioFibraLlama(
+            onGuardar: (datos) {
+              setState(() {
+                datosFormulariosFibras.addAll(datos);
+              });
+            },
+          ),
+    );
+  }
+
+  void _abrirFormularioEsquila() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioEsquilaLlama(
+            onGuardar: (datos) {
+              setState(() {
+                datosFormulariosEsquila.addAll(datos);
+              });
+            },
+          ),
+    );
+  }
+
+  void _abrirFormularioMedicacion() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => FormularioMedicacionLlama(
+            onGuardar: (datos) {
+              datosFormulariosMedicacion.addAll(datos);
+            },
+          ),
+    );
   }
 
   @override
@@ -207,9 +442,10 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
                   onSaved: (value) => _arete = value!,
                   cursorColor: Color(0xFF7A6E2A),
                 ),
-                TextFormField(
+
+                DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-                    labelText: "Tipo Parto",
+                    labelText: "Selecciona el tipo parto",
                     labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
@@ -218,11 +454,22 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
                       ),
                     ),
                   ),
+                  value: _tipo_parto,
+                  items:
+                      _tipo_partos.map<DropdownMenuItem<String>>((tipoParto) {
+                        return DropdownMenuItem<String>(
+                          value: tipoParto,
+                          child: Text(tipoParto),
+                        );
+                      }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _tipo_parto = value;
+                    });
+                  },
                   validator:
                       (value) =>
-                          value!.isEmpty ? "Ingrese el tipo de parto" : null,
-                  onSaved: (value) => _tipo_parto = value!,
-                  cursorColor: Color(0xFF7A6E2A),
+                          value == null ? "Seleccione un tipo de parto" : null,
                 ),
                 SizedBox(height: 20),
 
@@ -289,7 +536,7 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
                 // Dropdown de Fenotipo
                 DropdownButtonFormField<int>(
                   decoration: InputDecoration(
-                    labelText: "Selecciona un Fenotipo",
+                    labelText: "Selecciona un Tipo",
                     labelStyle: TextStyle(color: Color(0xFF7A6E2A)),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
@@ -426,6 +673,54 @@ class _FormularioAlpacaPageState extends State<FormularioAlpacaPage> {
           ),
         ),
       ),
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 16, right: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton(
+              heroTag: 'btn1',
+              onPressed: _abrirFormularioPequeno,
+              child: Icon(Icons.add, size: 32),
+              backgroundColor: Colors.green,
+              tooltip: "Botón 1",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn2',
+              onPressed: _abrirFormularioMorfologico,
+              child: Icon(Icons.pets, size: 32),
+              backgroundColor: Colors.orange,
+              tooltip: "Botón 2",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn3',
+              onPressed: _abrirFormularioFibra,
+              child: Icon(Icons.directions_run, size: 32),
+              backgroundColor: Colors.blue,
+              tooltip: "Botón 3",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn4',
+              onPressed: _abrirFormularioEsquila,
+              child: Icon(Icons.star, size: 32),
+              backgroundColor: Colors.purple,
+              tooltip: "Botón 4",
+            ),
+            SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'btn5',
+              onPressed: _abrirFormularioMedicacion,
+              child: Icon(Icons.camera_alt, size: 32),
+              backgroundColor: Colors.red,
+              tooltip: "Botón 5",
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
